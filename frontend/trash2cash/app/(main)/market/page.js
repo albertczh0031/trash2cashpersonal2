@@ -118,7 +118,7 @@ export default function MarketplacePage() {
     <div className="space-y-4">
       <h2 className="text-5xl font-extrabold text-white">Get Involved</h2>
       <p className="text-white/90 text-xl max-w-3xl">
-        Whether you're clearing out your space or hunting for a great deal, join a community making a difference through reuse and sustainability.
+        Whether you&apos;re clearing out your space or hunting for a great deal, join a community making a difference through reuse and sustainability.
       </p>
     </div>
 
