@@ -31,7 +31,7 @@ ALLOWED_HOSTS = [
     '0.0.0.0', 
     'localhost', 
     '127.0.0.1',
-    'trash2cashpersonal2.onrender.com',
+    'trash2cashpersonal.onrender.com',
 ]
 
 
@@ -78,7 +78,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://trash2cashpersonal2.onrender.com",
+    "https://trash2cashpersonal.onrender.com",
 ]
 
 CSRF_COOKIE_SECURE = True

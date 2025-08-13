@@ -15,7 +15,7 @@ export default function AppointmentView() {
     const userToken = localStorage.getItem("access");
     if (!userToken) return;
 
-    const response = await fetch("https://trash2cashpersonal2.onrender.com/api/user-profile/", {
+    const response = await fetch("https://trash2cashpersonal.onrender.com/api/user-profile/", {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
@@ -35,7 +35,7 @@ export default function AppointmentView() {
     if (!userToken) return;
 
     const response = await fetch(
-      "https://trash2cashpersonal2.onrender.com/api/my-appointments/?status=Booked",
+      "https://trash2cashpersonal.onrender.com/api/my-appointments/?status=Booked",
       {
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -53,7 +53,7 @@ export default function AppointmentView() {
     const userToken = localStorage.getItem("access");
     if (!userToken) return;
 
-    const response = await fetch("https://trash2cashpersonal2.onrender.com/api/rewards/api/rewards/expired-vouchers/", {
+    const response = await fetch("https://trash2cashpersonal.onrender.com/api/rewards/api/rewards/expired-vouchers/", {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
@@ -77,7 +77,7 @@ export default function AppointmentView() {
     if (!userToken) return;
 
     const response = await fetch(
-      "https://trash2cashpersonal2.onrender.com/api/my-appointments/?status=Completed",
+      "https://trash2cashpersonal.onrender.com/api/my-appointments/?status=Completed",
       {
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -96,7 +96,7 @@ export default function AppointmentView() {
     if (!userToken) return;
 
     const response = await fetch(
-      "https://trash2cashpersonal2.onrender.com/api/rewards/api/rewards/redeemed-voucher-instances/",
+      "https://trash2cashpersonal.onrender.com/api/rewards/api/rewards/redeemed-voucher-instances/",
       {
         headers: {
           Authorization: `Bearer ${userToken}`,

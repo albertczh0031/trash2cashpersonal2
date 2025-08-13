@@ -23,7 +23,7 @@ export default function OTPVerificationPage() {
           throw new Error("No authentication token found");
         }
 
-        const response = await fetch("https://trash2cashpersonal2.onrender.com/api/getemail/", {
+        const response = await fetch("https://trash2cashpersonal.onrender.com/api/getemail/", {
           headers: {
             Authorization: `Bearer ${token}`, // Include the token in the Authorization header
           },
@@ -32,7 +32,7 @@ export default function OTPVerificationPage() {
         // If the access token is expired, refresh it
         if (response.status === 401) {
           const access = await refreshAccessToken();
-          response = await fetch("https://trash2cashpersonal2.onrender.com/api/getemail/", {
+          response = await fetch("https://trash2cashpersonal.onrender.com/api/getemail/", {
             headers: {
               Authorization: `Bearer ${access}`,
             },
@@ -61,7 +61,7 @@ export default function OTPVerificationPage() {
 
   const handleVerify = async () => {
     try {
-      const response = await fetch("https://trash2cashpersonal2.onrender.com/api/verify-otp/", {
+      const response = await fetch("https://trash2cashpersonal.onrender.com/api/verify-otp/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ otp , email }),
@@ -109,7 +109,7 @@ export default function OTPVerificationPage() {
     }
 
     try {
-      const res = await fetch("https://trash2cashpersonal2.onrender.com/api/send-otp/", {
+      const res = await fetch("https://trash2cashpersonal.onrender.com/api/send-otp/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: emailToSend }),

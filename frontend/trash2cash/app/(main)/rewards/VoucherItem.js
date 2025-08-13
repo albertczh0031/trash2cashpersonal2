@@ -9,7 +9,7 @@ import Image from 'next/image';
 
 export default function VoucherItem({ voucher }) {
   const redeemVoucher = async () => {
-    const res = await fetch(`https://trash2cashpersonal2.onrender.com/api/rewards/update-voucher-instance/${voucher.id}/`, {
+    const res = await fetch(`https://trash2cashpersonal.onrender.com/api/rewards/update-voucher-instance/${voucher.id}/`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ export default function VoucherItem({ voucher }) {
   };
 
   const useVoucher = async () => {
-    const res = await fetch(`https://trash2cashpersonal2.onrender.com/api/rewards/use-voucher-instance/${voucher.id}/`, {
+    const res = await fetch(`https://trash2cashpersonal.onrender.com/api/rewards/use-voucher-instance/${voucher.id}/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

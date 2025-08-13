@@ -122,7 +122,7 @@ export default function UploadPhoto() {
         alert("You need to log in.");
         return;
       }
-      const response = await fetch("https://trash2cashpersonal2.onrender.com/api/user-profile/", {
+      const response = await fetch("https://trash2cashpersonal.onrender.com/api/user-profile/", {
         headers: {
           "Authorization": `Bearer ${accessToken}`,
         },
@@ -142,7 +142,7 @@ export default function UploadPhoto() {
     try {
       // Send the POST request to the backend
       const response = await fetch(
-        "https://trash2cashpersonal2.onrender.com/api/upload-and-analyze/",
+        "https://trash2cashpersonal.onrender.com/api/upload-and-analyze/",
         {
           method: "POST",
           body: formData,
