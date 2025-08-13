@@ -1,51 +1,33 @@
 #!/bin/bash
+set -e  # Exit immediately if a command exits with a non-zero status
 
-# Debugging: Confirm the script is running
-echo "entrypoint.sh executed"
+echo "✅ entrypoint.sh executed"
 
-# Remove the existing SQLite database file
-if [ -f "db.sqlite3" ]; then
-    echo "Deleting existing db.sqlite3 file..."
-    rm db.sqlite3
-fi
-# Run migrations
-echo "Running migrations..."
-python manage.py makemigrations analytics chat community logistics marketplace recycler rewards upload users
-python manage.py migrate
+# Run migrations (do NOT create migrations in production)
+echo "📦 Applying migrations..."
+python manage.py migrate --noinput
 
-# Populate data
-echo "Populating tiers..."
-python manage.py populate_tiers
+# Populate data if needed
+echo "🌱 Populating initial data..."
+python manage.py populate_tiers || true
+python manage.py populate_profiles || true
+python manage.py populate_recyclers || true
+python manage.py populate_vouchers || true
+python manage.py populate_recyclable_identifiers || true
+python manage.py populate_appointments || true
+python manage.py populate_chatrooms || true
 
-echo "Populating profiles..."
-python manage.py populate_profiles
-
-echo "Populating recyclers..."
-python manage.py populate_recyclers
-
-echo "Populating vouchers..."
-python manage.py populate_vouchers
-
-echo "Populating recyclable identifiers..."
-python manage.py populate_recyclable_identifiers
-
-echo "Populating appointments..."
-python manage.py populate_appointments
-
-echo "Populating chatrooms..."
-python manage.py populate_chatrooms
-
-# Create a generic superuser for testing
-echo "Creating a generic superuser..."
+# Create admin user if not exists
+echo "👤 Ensuring admin user exists..."
 python manage.py shell <<EOF
 from django.contrib.auth.models import User
 if not User.objects.filter(username="admin").exists():
     User.objects.create_superuser("admin", "admin@example.com", "password")
-    print("Superuser 'admin' created with password 'password'")
+    print("✅ Superuser 'admin' created with password 'password'")
 else:
-    print("Superuser 'admin' already exists")
+    print("ℹ️ Superuser 'admin' already exists")
 EOF
 
-# Start the server
-echo "Starting the server..."
+# Start the app
+echo "🚀 Starting the server..."
 exec "$@"
