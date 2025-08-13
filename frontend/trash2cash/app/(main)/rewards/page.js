@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import VoucherItem from './VoucherItem';
 import { Card, CardContent } from '@/components/ui/card';
 
-const VOUCHER_API = 'http://127.0.0.1:8000/api/rewards/get-voucher-instance/';
+const VOUCHER_API = 'https://trash2cashpersonal.onrender.com/api/rewards/get-voucher-instance/';
 const TIER_PRIORITY = { Bronze: 1, Silver: 2, Gold: 3, Platinum: 4 };
 const TABS = { POINTS: 'points', UNREDEEMED: 'unredeemed', REDEEMED: 'redeemed' };
 
@@ -58,7 +58,7 @@ export default function RewardsPage() {
         console.warn("Access token might be expired, trying to refresh...");
 
         try {
-          const refreshRes = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
+          const refreshRes = await fetch("https://trash2cashpersonal.onrender.com/api/token/refresh/", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

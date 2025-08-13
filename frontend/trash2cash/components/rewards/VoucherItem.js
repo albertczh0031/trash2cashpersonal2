@@ -10,7 +10,7 @@ import Image from 'next/image';
 export default function VoucherItem({ voucher }) {
   const redeemVoucher = async () => {
     const res = await fetch(
-      `http://127.0.0.1:8000/api/rewards/update-voucher-instance/${voucher.id}/`,
+      `https://trash2cashpersonal.onrender.com/api/rewards/update-voucher-instance/${voucher.id}/`,
       {
         method: "PATCH",
         headers: {
@@ -29,7 +29,7 @@ export default function VoucherItem({ voucher }) {
 
   const useVoucher = async () => {
     const res = await fetch(
-      `http://127.0.0.1:8000/api/rewards/use-voucher-instance/${voucher.id}/`,
+      `https://trash2cashpersonal.onrender.com/api/rewards/use-voucher-instance/${voucher.id}/`,
       {
         method: "POST",
         headers: {

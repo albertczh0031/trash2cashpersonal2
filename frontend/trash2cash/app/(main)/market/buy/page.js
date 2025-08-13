@@ -68,8 +68,8 @@ export default function BuyPage() {
   const fetchItems = async (categoryEndpoint = "", days = null, min = null, max = null) => {
     setLoading(true);
     let baseurl = categoryEndpoint
-      ? `http://127.0.0.1:8000/api/marketplace/${categoryEndpoint}/`
-      : `http://127.0.0.1:8000/api/marketplace/all-items/`;
+      ? `https://trash2cashpersonal.onrender.com/api/marketplace/${categoryEndpoint}/`
+      : `https://trash2cashpersonal.onrender.com/api/marketplace/all-items/`;
     let url = query 
       ? baseurl + `?search=${query}&days=${days}&min=${min}&max=${max}`
       : baseurl + `?days=${days}&min=${min}&max=${max}`

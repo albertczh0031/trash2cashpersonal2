@@ -24,7 +24,7 @@ export default function RecyclingCentreEditModal({ initialData, onSave }) {
 
   // Fetch categories on mount
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/categories/")
+    fetch("https://trash2cashpersonal.onrender.com/api/categories/")
       .then((res) => res.json())
       .then(setCategories);
   }, []);
@@ -52,7 +52,7 @@ export default function RecyclingCentreEditModal({ initialData, onSave }) {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/api/recycler/${initialData.id}/`,
+        `https://trash2cashpersonal.onrender.com/api/recycler/${initialData.id}/`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

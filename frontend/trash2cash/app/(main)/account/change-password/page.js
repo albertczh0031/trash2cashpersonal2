@@ -56,7 +56,7 @@ export default function ChangePasswordPage() {
     const token = localStorage.getItem("access");
 
     try {
-      const res = await fetch("http://localhost:8000/api/change-password/", {
+      const res = await fetch("https://trash2cashpersonal.onrender.com/api/change-password/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

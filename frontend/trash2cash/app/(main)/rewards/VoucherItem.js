@@ -9,7 +9,7 @@ import Image from 'next/image';
 
 export default function VoucherItem({ voucher }) {
   const redeemVoucher = async () => {
-    const res = await fetch(`http://127.0.0.1:8000/api/rewards/update-voucher-instance/${voucher.id}/`, {
+    const res = await fetch(`https://trash2cashpersonal.onrender.com/api/rewards/update-voucher-instance/${voucher.id}/`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ export default function VoucherItem({ voucher }) {
   };
 
   const useVoucher = async () => {
-    const res = await fetch(`http://127.0.0.1:8000/api/rewards/use-voucher-instance/${voucher.id}/`, {
+    const res = await fetch(`https://trash2cashpersonal.onrender.com/api/rewards/use-voucher-instance/${voucher.id}/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export default function VoucherItem({ voucher }) {
             {/* Image at the top of the card */}
             <Image
               src={voucher.voucher.image
-      ? `http://127.0.0.1:8000${voucher.voucher.image}`
+      ? `https://trash2cashpersonal.onrender.com${voucher.voucher.image}`
       : '/voucher_images/no-image-available.jpg'} 
               alt={voucher.voucher.name}
               layout="fill"

@@ -5,7 +5,7 @@ export default function RecyclingCentreInfoCard({ recycler }) {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/categories/")
+    fetch("https://trash2cashpersonal.onrender.com/api/categories/")
       .then((res) => res.json())
       .then(setCategories);
   }, []);

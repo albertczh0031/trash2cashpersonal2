@@ -21,7 +21,7 @@ export default function ListingPage() {
         const tomasUserId = 15; 
 
         // Create or get existing chatroom with Tomas
-        const response = await fetch("http://127.0.0.1:8000/api/chat/get-or-create-chatroom/", {
+        const response = await fetch("https://trash2cashpersonal.onrender.com/api/chat/get-or-create-chatroom/", {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
