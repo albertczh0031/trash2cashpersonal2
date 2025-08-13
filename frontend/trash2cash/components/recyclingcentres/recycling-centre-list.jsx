@@ -39,7 +39,7 @@ export default function RecyclingCentreList() {
     if (!lat || !lon || !category) return;
 
     fetch(
-      `https://trash2cashpersonal.onrender.com/api/locate_centres/?latitude=${lat}&longitude=${lon}&category=${category}`,
+      `https://trash2cashpersonal2.onrender.com/api/locate_centres/?latitude=${lat}&longitude=${lon}&category=${category}`,
     )
       .then((res) => res.json())
       .then((data) => {

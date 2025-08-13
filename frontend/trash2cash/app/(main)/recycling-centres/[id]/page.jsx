@@ -16,7 +16,7 @@ export default function RecyclingCentreDetailPage() {
 
   useEffect(() => {
     // Fetch from backend data
-    fetch(`https://trash2cashpersonal.onrender.com/api/recycler/${id}/`)
+    fetch(`https://trash2cashpersonal2.onrender.com/api/recycler/${id}/`)
       .then((res) => {
         if (!res.ok) throw new Error("Unable to get Recycler Data");
         return res.json();

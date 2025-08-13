@@ -21,7 +21,7 @@ const AppointmentPage = () => {
     const isDropoff = searchParams.get("is_dropoff"); // Get the is_dropoff parameter from the URL
 
     fetch(
-      `https://trash2cashpersonal.onrender.com/api/appointments/${centreId}/${formattedDate}/?is_dropoff=${isDropoff}`,
+      `https://trash2cashpersonal2.onrender.com/api/appointments/${centreId}/${formattedDate}/?is_dropoff=${isDropoff}`,
     )
       .then((response) => {
         if (!response.ok) {
@@ -43,7 +43,7 @@ const AppointmentPage = () => {
   // To get a new access token when it expiress
   const refreshAccessToken = async (refreshToken) => {
     try {
-      const response = await fetch("https://trash2cashpersonal.onrender.com/api/token/refresh/", {
+      const response = await fetch("https://trash2cashpersonal2.onrender.com/api/token/refresh/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +76,7 @@ const AppointmentPage = () => {
 
     try {
       let response = await fetch(
-        "https://trash2cashpersonal.onrender.com/api/appointments/confirm/",
+        "https://trash2cashpersonal2.onrender.com/api/appointments/confirm/",
         {
           method: "POST",
           headers: {
@@ -93,7 +93,7 @@ const AppointmentPage = () => {
         if (newAccessToken) {
           // Retry the request with the new token
           response = await fetch(
-            "https://trash2cashpersonal.onrender.com/api/appointments/confirm/",
+            "https://trash2cashpersonal2.onrender.com/api/appointments/confirm/",
             {
               method: "POST",
               headers: {

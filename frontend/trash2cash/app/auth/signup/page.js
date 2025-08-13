@@ -60,7 +60,7 @@ export default function SignupPage() {
     if (!validateForm()) return;
 
     try {
-      const response = await fetch("https://trash2cashpersonal.onrender.com/api/signup/", {
+      const response = await fetch("https://trash2cashpersonal2.onrender.com/api/signup/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -98,7 +98,7 @@ export default function SignupPage() {
       }
 
       // Authenticate with Django
-      const res = await fetch("https://trash2cashpersonal.onrender.com/api/token/", {
+      const res = await fetch("https://trash2cashpersonal2.onrender.com/api/token/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

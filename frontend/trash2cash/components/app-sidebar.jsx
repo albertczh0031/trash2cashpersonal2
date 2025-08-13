@@ -39,7 +39,7 @@ export function AppSidebar() {
           throw new Error("No authentication token found");
         }
 
-        const response = await fetch("https://trash2cashpersonal.onrender.com/api/user-role/", {
+        const response = await fetch("https://trash2cashpersonal2.onrender.com/api/user-role/", {
           headers: {
             Authorization: `Bearer ${token}`, // Include the token in the Authorization header
           },
@@ -48,7 +48,7 @@ export function AppSidebar() {
         // If the access token is expired, refresh it
         if (response.status === 401) {
           const access = await refreshAccessToken();
-          response = await fetch("https://trash2cashpersonal.onrender.com/api/user-role/", {
+          response = await fetch("https://trash2cashpersonal2.onrender.com/api/user-role/", {
             headers: {
               Authorization: `Bearer ${access}`,
             },

@@ -30,7 +30,7 @@ export default function LoginPage() {
 
     try {
       // 1. Authenticate with Django
-      const res = await fetch("https://trash2cashpersonal.onrender.com/api/token/", {
+      const res = await fetch("https://trash2cashpersonal2.onrender.com/api/token/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -62,7 +62,7 @@ export default function LoginPage() {
       if (!sessionRes.ok) throw new Error("Session creation failed");
 
       // 4. Check if verified
-      const verifiedRes = await fetch("https://trash2cashpersonal.onrender.com/api/get-verification/", {
+      const verifiedRes = await fetch("https://trash2cashpersonal2.onrender.com/api/get-verification/", {
         headers: {
           Authorization: `Bearer ${access}`,
         },

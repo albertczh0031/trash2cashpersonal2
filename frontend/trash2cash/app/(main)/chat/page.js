@@ -31,7 +31,7 @@ export default function ChatRoomPage() {
     if (!token || !selectedChatroom) return;
     
     try {
-      await fetch("https://trash2cashpersonal.onrender.com/api/chat/typing/", {
+      await fetch("https://trash2cashpersonal2.onrender.com/api/chat/typing/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export default function ChatRoomPage() {
     if (!token || !selectedChatroom) return;
     
     try {
-      const response = await fetch(`https://trash2cashpersonal.onrender.com/api/chat/typing/${selectedChatroom}/`, {
+      const response = await fetch(`https://trash2cashpersonal2.onrender.com/api/chat/typing/${selectedChatroom}/`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },
@@ -97,7 +97,7 @@ export default function ChatRoomPage() {
     // Get current user info
     if (accessToken) {
       console.log('Fetching user profile with token:', accessToken); // Debug log
-      fetch("https://trash2cashpersonal.onrender.com/api/user-profile/", {
+      fetch("https://trash2cashpersonal2.onrender.com/api/user-profile/", {
         headers: {
           "Authorization": `Bearer ${accessToken}`,
         },
@@ -162,7 +162,7 @@ export default function ChatRoomPage() {
   useEffect(() => {
     if (!token) return;
     setLoading(true);
-    fetch("https://trash2cashpersonal.onrender.com/api/chat/my-chatrooms/", {
+    fetch("https://trash2cashpersonal2.onrender.com/api/chat/my-chatrooms/", {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -207,7 +207,7 @@ export default function ChatRoomPage() {
   useEffect(() => {
     if (!token || !selectedChatroom) return;
     setLoading(true);
-    fetch(`https://trash2cashpersonal.onrender.com/api/chat/messages/${selectedChatroom}/`, {
+    fetch(`https://trash2cashpersonal2.onrender.com/api/chat/messages/${selectedChatroom}/`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -246,7 +246,7 @@ export default function ChatRoomPage() {
     if (!token || !selectedChatroom) return;
     
     const interval = setInterval(() => {
-      fetch(`https://trash2cashpersonal.onrender.com/api/chat/messages/${selectedChatroom}/`, {
+      fetch(`https://trash2cashpersonal2.onrender.com/api/chat/messages/${selectedChatroom}/`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -282,7 +282,7 @@ export default function ChatRoomPage() {
     if (!token) return;
     
     try {
-      const response = await fetch("https://trash2cashpersonal.onrender.com/api/chat/my-chatrooms/", {
+      const response = await fetch("https://trash2cashpersonal2.onrender.com/api/chat/my-chatrooms/", {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -314,7 +314,7 @@ export default function ChatRoomPage() {
     }
     
     try {
-      const response = await fetch(`https://trash2cashpersonal.onrender.com/api/chat/send/`, {
+      const response = await fetch(`https://trash2cashpersonal2.onrender.com/api/chat/send/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -326,7 +326,7 @@ export default function ChatRoomPage() {
       if (!response.ok) throw new Error('Failed to send message');
       
       // Immediately fetch updated messages
-      const messagesResponse = await fetch(`https://trash2cashpersonal.onrender.com/api/chat/messages/${selectedChatroom}/`, {
+      const messagesResponse = await fetch(`https://trash2cashpersonal2.onrender.com/api/chat/messages/${selectedChatroom}/`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
