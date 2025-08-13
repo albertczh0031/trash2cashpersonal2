@@ -1,0 +1,33 @@
+
+services:
+  web:
+    build: backend/trash2cash
+    command: bash ./entrypoint.sh python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend/trash2cash:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  celery:
+    build: backend/trash2cash
+    command: celery -A trash2cash.task_queue worker --loglevel=info
+    working_dir: /app
+    volumes:
+      - ./backend/trash2cash:/app
+    depends_on:
+      - redis
+    environment:
+      - PYTHONPATH=/app
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    env_file:
+      - backend/trash2cash/.env
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+

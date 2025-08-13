@@ -1,0 +1,16 @@
+john_doe;John;Doe;john.doe@example.com;123 Main St;New York;10001;500;Gold;django123;is_admin=True
+jane_smith;Jane;Smith;jane.smith@example.com;456 Elm St;Los Angeles;90001;300;Silver;django123
+alice_wonder;Alice;Wonderland;alice.wonder@example.com;789 Oak St;Chicago;60601;700;Platinum;django123
+bob_builder;Bob;Builder;bob.builder@example.com;321 Pine St;Houston;77001;200;Bronze;django123
+charlie_brown;Charlie;Brown;charlie.brown@example.com;654 Maple St;San Francisco;94101;450;Silver;django123
+diana_prince;Diana;Prince;diana.prince@example.com;987 Cedar St;Seattle;98101;800;Gold;django123
+edward_snow;Edward;Snowden;edward.snow@example.com;123 Birch St;Boston;02101;600;Gold;django123
+fiona_shrek;Fiona;Shrek;fiona.shrek@example.com;456 Willow St;Miami;33101;350;Silver;django123
+george_clooney;George;Clooney;george.clooney@example.com;789 Aspen St;Denver;80201;1000;Platinum;django123
+hannah_montana;Hannah;Montana;hannah.montana@example.com;321 Redwood St;Atlanta;30301;150;Bronze;django123
+trash2cash_admin;Edgar;Poe;t2c.zerowastesolutions@gmail.com;321 Redwood St;Atlanta;30301;150;Bronze;django123;is_admin=True
+trash2cash;Edgar;Poe;t2c.zerowastesolutions@gmail.com;321 Redwood St;Atlanta;30301;150;Bronze;django123
+pinguinin;Pinguinin;Negrito;;;;;;;django123
+pinguinon;Pinguinon;Negrito;;;;;;;django123
+tomas;Tomas;C;;;;;;;django123
+camaroncin;Camaroncin;C;;;;;;;django123

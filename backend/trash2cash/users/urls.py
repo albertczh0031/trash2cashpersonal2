@@ -1,0 +1,28 @@
+# users/views.py
+from django.urls import path
+from .views import *
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from .views import MyAppointmentsView, CustomAuthToken, change_password, GetAdminStatusAPIView, UserProfileView, OTPAPIView, GetEmailAPIView, GetVerifiedStatusAPIView, SendOTPView
+
+urlpatterns = [
+    path('my-appointments/', MyAppointmentsView.as_view()),  # <-- ADD THIS
+    path('appointments/<int:centre_id>/<str:date>/', AvailableAppointmentsView.as_view(), name='available-appointments'),   # Go to this to see all available appointments for a particular recycling centre e.g. http://127.0.0.1:8000/api/appointments/1/2025-05-06/
+    path('appointments/confirm/', ConfirmAppointmentView.as_view(), name='confirm-appointment'),
+    path('change-password/', change_password, name='change-password'),
+    path('login/', CustomAuthToken.as_view(), name='login'),
+    path('api/user-role/', get_user_role, name='user-role'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('login/', CustomAuthToken.as_view(), name='login'),
+    path('getadmin/', GetAdminStatusAPIView.as_view(), name='get-admin-status'),
+    path('change-password/', change_password, name='change-password'),
+    path('login/', CustomAuthToken.as_view(), name='login'),
+    path('api/user-profile/', UserProfileView.as_view(), name='user-profile'),
+    path('api/verify-otp/', OTPAPIView.as_view(), name='verify-otp'),
+    path('api/getemail/', GetEmailAPIView.as_view(), name='get-email'),
+    path('api/get-verification/', GetVerifiedStatusAPIView.as_view(), name='get-verification-status'),
+    path("api/send-otp/", SendOTPView.as_view(), name="send-otp"),
+]

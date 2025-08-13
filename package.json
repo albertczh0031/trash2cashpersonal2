@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@radix-ui/react-progress": "^1.1.7",
+    "@radix-ui/react-tabs": "^1.1.12",
+    "chart.js": "^4.5.0",
+    "framer-motion": "^12.23.3",
+    "react-chartjs-2": "^5.3.0",
+    "react-range": "^1.10.0"
+  }
+}

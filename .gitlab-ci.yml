@@ -1,0 +1,34 @@
+image: node:20-alpine
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_TLS_CERTDIR: ""
+
+build_job:
+  stage: build
+  tags:
+    - tests
+  script:
+    - cd frontend/trash2cash
+    - node --version
+    - npm install
+    - ls
+
+lint:
+  image: node:20-alpine
+  stage: test
+  tags:
+    - tests
+  script:
+    - cd frontend/trash2cash
+    - npm install
+    - npm ci
+    - npx eslint . --ext .js,.jsx
+  rules:
+    - changes:
+        - "**/*.js"
+        - "**/*.jsx"
+        - "eslint.config.js"

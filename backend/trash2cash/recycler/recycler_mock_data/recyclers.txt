@@ -1,0 +1,50 @@
+---
+name: Besi Buruk di Cheras @ Scrap Metal Cheras - Pattu Metal (PME)
+email: a@example.com
+address: 17, Jalan 11/118b, Desa Tun Razak, 56000 CHERAS, Wilayah Persekutuan Kuala Lumpur
+latitude: 3.08018
+longitude: 101.71785
+opening_time: 08:00
+closing_time: 19:30
+tags: paper
+accepted categories: paper, glass
+---
+name: Vairam Recycle Trading
+email: b@example.com
+address: Lot 11, Jalan 6/7, Kawasan Perindustrian Seri Kembangan, 43300 Seri Kembangan, Selangor
+latitude: 3.01783
+longitude: 101.71198
+opening_time: 08:00
+closing_time: 19:00
+tags: plastic
+accepted categories: plastic
+---
+name: Perniagaan Logam Trisula
+email: c@example.com
+address: No. 45, Jalan 1/154, Taman Bukit Anggerik Cheras 7 1/2, 56000, Kuala Lumpur, WP Kuala Lumpur, 56000
+latitude: 3.06644
+longitude: 101.74758
+opening_time: 08:00
+closing_time: 19:00
+tags: cardboard
+accepted categories: paper, cardboard
+---
+name: NCR Recycle Trading
+email: d@example.com
+address: No.6, Jalan Bunga Melur, Taman Suria Jaya, 43200 Cheras, Selangor
+latitude: 3.06682
+longitude: 101.75338
+opening_time: 09:00
+closing_time: 18:00
+tags: metal, clothes
+accepted categories: metal, clothes
+---
+name: Besi Buruk Cheras - Pattu Maju Recycle
+email: e@example.com
+address: INDUSTRIAL PARK, 15, Jalan 5/118c, Desa Tun Razak, 56000 Kuala Lumpur, Wilayah Persekutuan Kuala Lumpur
+latitude: 3.08031
+longitude: 101.73113
+opening_time: 08:00
+closing_time: 19:00
+tags: e-waste, a bulb / tube
+accepted categories: e-waste, a bulb / tube

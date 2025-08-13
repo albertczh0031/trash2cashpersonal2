@@ -1,0 +1,24 @@
+1;pinguinin;Hey pinguinon! Are you still looking to sell those plastic bottles?;2025-08-05;14;30
+1;pinguinon;Yes, I still have them! When would you like to meet?;2025-08-05;14;45
+1;pinguinin;Great! I can meet you at the recycling center tomorrow.;2025-08-05;15;20
+1;pinguinon;Perfect! I'll bring them around 2pm.;2025-08-05;15;35
+2;pinguinin;Hi tomas! I heard you collect aluminum cans?;2025-08-06;12;20
+2;tomas;Hey pinguinin! Yes, I do. Do you have some to sell?;2025-08-06;12;45
+2;pinguinin;I have about 15kg. What's your rate?;2025-08-06;13;10
+2;tomas;I can offer $1.80 per kg. Sound good?;2025-08-06;13;30
+3;pinguinon;Tomas, are you interested in cardboard trading?;2025-08-06;16;15
+3;tomas;Absolutely! What kind of cardboard do you have?;2025-08-06;16;40
+3;pinguinon;Mostly clean boxes from online deliveries.;2025-08-06;17;25
+3;tomas;Perfect! I'll take whatever you have.;2025-08-06;18;10
+4;tomas;Camaroncin, still need those glass bottles?;2025-08-07;11;30
+4;camaroncin;Yes! Do you have clear or colored glass?;2025-08-07;12;15
+4;tomas;Mixed - mostly clear with some green ones.;2025-08-07;13;45
+4;camaroncin;Great! I need both types.;2025-08-07;14;20
+5;pinguinin;Hi camaroncin! I saw your post about electronic waste!;2025-08-07;14;30
+5;camaroncin;Hey pinguinin! Yes, I collect old phones and tablets.;2025-08-07;15;10
+5;pinguinin;I have some old laptops. Are you interested?;2025-08-07;15;45
+5;camaroncin;Definitely! What condition are they in?;2025-08-07;16;20
+6;pinguinon;Hi camaroncin! Want to coordinate our pickup schedules?;2025-08-08;10;15
+6;camaroncin;Good idea! When do you usually go to the center?;2025-08-08;11;20
+6;pinguinon;Tuesday and Friday mornings work best for me.;2025-08-08;12;35
+6;camaroncin;Perfect! I can join you on Fridays.;2025-08-08;13;15

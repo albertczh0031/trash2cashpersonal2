@@ -1,0 +1,78 @@
+plastic:
+  plastic
+  plastic bottle
+  PET bottle
+  HDPE container
+  plastic packaging
+  yogurt cup
+  plastic lid
+  plastic bag
+  detergent bottle
+  milk jug
+  shampoo bottle
+  plastic utensil
+  Tupperware
+
+paper:
+  paper
+  printer paper
+  newspaper
+  magazine
+  notebook
+  envelope
+  paper bag
+  office paper
+  paper sheet
+
+cardboard:
+  cardboard
+  cardboard box
+  corrugated cardboard
+  cereal box
+  paperboard
+  shipping box
+  folding carton
+  shoe box
+
+glass:
+  glass
+  glass bottle
+  wine bottle
+  beer bottle
+  jam jar
+  mason jar
+  glass container
+
+metal:
+  metal
+  aluminum can
+  tin can
+  soda can
+  food can
+  metal lid
+  aluminum foil
+  steel can
+
+e-waste:
+  e-waste
+  mobile phone
+  laptop
+  tablet
+  battery
+  charger
+  circuit board
+  remote control
+  headphones
+  printer
+
+a bulb / tube:
+  bulb
+  incandescent bulb
+  CFL bulb
+  LED bulb
+  fluorescent lamp
+  fluorescent tube
+
+clothes:
+  clothing
+  textile
