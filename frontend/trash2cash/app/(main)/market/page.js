@@ -126,7 +126,7 @@ export default function MarketplacePage() {
       <Card className="bg-gradient-to-br from-green-100 to-white hover:scale-[1.02] transition-transform duration-300 shadow-md">
         <CardContent className="p-6 space-y-4 text-center">
           <div className="text-4xl">🛍️</div>
-          <h2 className="text-2xl font-bold">I'm a Buyer</h2>
+          <h2 className="text-2xl font-bold">I&apos;m a Buyer</h2>
           <p className="text-muted-foreground">
             Discover affordable, pre-loved items and shop sustainably from local sellers.
           </p>
@@ -139,7 +139,7 @@ export default function MarketplacePage() {
       <Card className="bg-gradient-to-br from-yellow-100 to-white hover:scale-[1.02] transition-transform duration-300 shadow-md">
         <CardContent className="p-6 space-y-4 text-center">
           <div className="text-4xl">💰</div>
-          <h2 className="text-2xl font-bold">I'm a Seller</h2>
+          <h2 className="text-2xl font-bold">I&apos;m a Seller</h2>
           <p className="text-muted-foreground">
             Declutter your space and earn extra income by selling your unused items.
           </p>

@@ -485,7 +485,7 @@ export default function ChatRoomPage() {
               </small>
               {/* DEBUG INFO - TO BE REMOVED */}
               <div style={{ fontSize: "0.75rem", color: "#999", marginTop: "0.5rem" }}>
-                Debug: Current user = "{currentUser || 'not set'}" (ID: {currentUserId || 'not set'})
+                Debug: Current user = &quot;{currentUser || 'not set'}&quot; (ID: {currentUserId || 'not set'})
               </div>
             </div>
 
