@@ -6,7 +6,7 @@ if [ -f "db.sqlite3" ]; then
 fi
 # Run migrations
 echo "Running migrations..."
-python manage.py makemigrations
+python manage.py makemigrations analytics chat community logistics marketplace recycler rewards upload users
 python manage.py migrate
 
 # Populate data
