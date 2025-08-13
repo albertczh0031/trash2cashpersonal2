@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Debugging: Confirm the script is running
+echo "entrypoint.sh executed"
+
 # Remove the existing SQLite database file
 if [ -f "db.sqlite3" ]; then
     echo "Deleting existing db.sqlite3 file..."
