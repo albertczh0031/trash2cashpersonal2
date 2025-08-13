@@ -10,3 +10,7 @@ george_clooney;George;Clooney;george.clooney@example.com;789 Aspen St;Denver;802
 hannah_montana;Hannah;Montana;hannah.montana@example.com;321 Redwood St;Atlanta;30301;150;Bronze;django123
 trash2cash_admin;Edgar;Poe;t2c.zerowastesolutions@gmail.com;321 Redwood St;Atlanta;30301;150;Bronze;django123;is_admin=True
 trash2cash;Edgar;Poe;t2c.zerowastesolutions@gmail.com;321 Redwood St;Atlanta;30301;150;Bronze;django123
+pinguinin;Pinguinin;Negrito;;;;;;;django123
+pinguinon;Pinguinon;Negrito;;;;;;;django123
+tomas;Tomas;C;;;;;;;django123
+camaroncin;Camaroncin;C;;;;;;;django123
