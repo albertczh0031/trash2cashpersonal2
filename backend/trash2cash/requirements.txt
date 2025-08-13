@@ -1,10 +1,12 @@
 celery~=5.5.2
+channels
+channels-redis
+Django~=5.2
 django-celery-beat~=2.8.0
 django-cors-headers
-django-timezone-field~=7.1
-Django~=5.2
-djangorestframework-simplejwt
 djangorestframework~=3.16.0
+djangorestframework-simplejwt
+django-timezone-field~=7.1
 google-cloud-storage
 google-cloud-vision
 googlemaps
