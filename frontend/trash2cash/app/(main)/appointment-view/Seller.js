@@ -6,8 +6,8 @@ import React, { useState, useEffect } from "react";
  * Centralized API endpoints
  */
 const API = {
-  PENDING_SELLERS: "http://trash2cashpersonal.onrender.com/api/pending-sellers/",
-  APPROVE_SELLER: (id) => `http://trash2cashpersonal.onrender.com/approve-seller/${id}/`,
+  PENDING_SELLERS: "https://trash2cashpersonal.onrender.com/api/pending-sellers/",
+  APPROVE_SELLER: (id) => `https://trash2cashpersonal.onrender.com/approve-seller/${id}/`,
 };
 
 export default function Seller() {

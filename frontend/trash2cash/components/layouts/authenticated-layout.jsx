@@ -16,7 +16,7 @@ export default function Layout({ children }) {
     const accessToken = localStorage.getItem('access');
 
     if (accessToken) {
-      fetch(`http://trash2cashpersonal.onrender.com/api/user-profile/`, {
+      fetch(`https://trash2cashpersonal.onrender.com/api/user-profile/`, {
         headers: {
           "Authorization": `Bearer ${accessToken}`,
         },

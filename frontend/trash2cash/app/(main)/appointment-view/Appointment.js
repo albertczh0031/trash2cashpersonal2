@@ -7,8 +7,8 @@ import AdminTicketCard from "@/components/ui/admin-ticket-card";
  * Centralized API endpoints
  */
 const API = {
-  APPOINTMENTS: "http://trash2cashpersonal.onrender.com/api/get-admin-appointments/",
-  REFRESH_TOKEN: "http://trash2cashpersonal.onrender.com/api/token/refresh/",
+  APPOINTMENTS: "https://trash2cashpersonal.onrender.com/api/get-admin-appointments/",
+  REFRESH_TOKEN: "https://trash2cashpersonal.onrender.com/api/token/refresh/",
 };
 
 export default function Appointment({ type }) {

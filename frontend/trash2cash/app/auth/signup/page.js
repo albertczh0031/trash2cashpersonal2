@@ -88,7 +88,7 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://trash2cashpersonal.onrender.com/api/signup/", {
+      const response = await fetch("https://trash2cashpersonal.onrender.com/api/signup/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -107,7 +107,7 @@ export default function SignupPage() {
       }
 
       // Authenticate
-      const res = await fetch("http://trash2cashpersonal.onrender.com/api/token/", {
+      const res = await fetch("https://trash2cashpersonal.onrender.com/api/token/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

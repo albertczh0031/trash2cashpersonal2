@@ -25,7 +25,7 @@ export default function BuyPage() {
       return;
     }
     try {
-      const res = await fetch(`http://trash2cashpersonal.onrender.com/api/users/${listing.seller}/`);
+      const res = await fetch(`https://trash2cashpersonal.onrender.com/api/users/${listing.seller}/`);
       const data = await res.json();
       setSelectedListing({
         ...listing,
@@ -95,8 +95,8 @@ export default function BuyPage() {
   const fetchItems = async (categoryEndpoint = "", days = null, min = null, max = null) => {
     setLoading(true);
     let baseurl = categoryEndpoint
-      ? `http://trash2cashpersonal.onrender.com/api/marketplace/${categoryEndpoint}/`
-      : `http://trash2cashpersonal.onrender.com/api/marketplace/all-items/`;
+      ? `https://trash2cashpersonal.onrender.com/api/marketplace/${categoryEndpoint}/`
+      : `https://trash2cashpersonal.onrender.com/api/marketplace/all-items/`;
     let url = query 
       ? baseurl + `?search=${query}&days=${days}&min=${min}&max=${max}`
       : baseurl + `?days=${days}&min=${min}&max=${max}`;
@@ -339,20 +339,20 @@ export default function BuyPage() {
                   seller_username: item.seller_username || item.seller?.username || "Unknown",
                   images: Array.isArray(item.images)
                     ? item.images.map(img =>
-                        img.startsWith("http") ? img : `http://trash2cashpersonal.onrender.com/${img}`
+                        img.startsWith("http") ? img : `https://trash2cashpersonal.onrender.com/${img}`
                       )
                     : item.images
-                    ? [`http://trash2cashpersonal.onrender.com/${item.images}`]
+                    ? [`https://trash2cashpersonal.onrender.com/${item.images}`]
                     : [],
                 }}
                 onMessageSellerClick={() => handleMessageSellerClick({
                   ...item,
                   images: Array.isArray(item.images)
                     ? item.images.map(img =>
-                        img.startsWith("http") ? img : `http://trash2cashpersonal.onrender.com/${img}`
+                        img.startsWith("http") ? img : `https://trash2cashpersonal.onrender.com/${img}`
                       )
                     : item.images
-                    ? [`http://trash2cashpersonal.onrender.com/${item.images}`]
+                    ? [`https://trash2cashpersonal.onrender.com/${item.images}`]
                     : [],
                 })}
               />

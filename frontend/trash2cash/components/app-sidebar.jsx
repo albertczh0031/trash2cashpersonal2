@@ -48,13 +48,13 @@ export function AppSidebar() {
         let token = localStorage.getItem("access");
         if (!token) throw new Error("No authentication token found");
 
-        let response = await fetch("http://trash2cashpersonal.onrender.com/api/user-role/", {
+        let response = await fetch("https://trash2cashpersonal.onrender.com/api/user-role/", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.status === 401) {
           const access = await refreshAccessToken();
-          response = await fetch("http://trash2cashpersonal.onrender.com/api/user-role/", {
+          response = await fetch("https://trash2cashpersonal.onrender.com/api/user-role/", {
             headers: { Authorization: `Bearer ${access}` },
           });
         }

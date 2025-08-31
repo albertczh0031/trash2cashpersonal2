@@ -78,7 +78,7 @@ export default function ChatNotificationProvider({ children }) {
     if (!token) return;
     
     try {
-      const response = await fetch(`http://trash2cashpersonal.onrender.com/api/chat/chatroom-unread-counts/`, {
+      const response = await fetch(`https://trash2cashpersonal.onrender.com/api/chat/chatroom-unread-counts/`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },

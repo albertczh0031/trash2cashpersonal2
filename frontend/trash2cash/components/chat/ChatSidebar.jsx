@@ -45,7 +45,7 @@ export default function ChatSidebar({
     const initials = name ? name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : '?';
     
     // If src is a relative URL starting with /media/, prepend the backend server URL
-    const fullImageSrc = src ? (src.startsWith('/media/') ? `http://trash2cashpersonal.onrender.com/${src}` : src) : null;
+    const fullImageSrc = src ? (src.startsWith('/media/') ? `https://trash2cashpersonal.onrender.com/${src}` : src) : null;
     
     const [imageError, setImageError] = React.useState(false);
     

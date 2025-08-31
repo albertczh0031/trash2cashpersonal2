@@ -11,8 +11,8 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
-const API_URL = "http://trash2cashpersonal.onrender.com/api/notifications/"; // trailing slash
-const API_REFRESH_TOKEN = "http://trash2cashpersonal.onrender.com/api/token/refresh/";
+const API_URL = "https://trash2cashpersonal.onrender.com/api/notifications/"; // trailing slash
+const API_REFRESH_TOKEN = "https://trash2cashpersonal.onrender.com/api/token/refresh/";
 
 function getAccessToken() {
   if (typeof window === "undefined") return null;
