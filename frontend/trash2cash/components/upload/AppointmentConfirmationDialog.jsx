@@ -16,6 +16,7 @@ export default function AppointmentConfirmationDialog({ open, onClose, appointme
   };
   // Intercept dialog close (X button or outside click) to always go to /upload
   const handleDialogChange = (isOpen) => {
+    console.log("Dialog changed:", isOpen);
     if (!isOpen) {
       goToUpload();
     }
@@ -25,6 +26,7 @@ export default function AppointmentConfirmationDialog({ open, onClose, appointme
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Appointment Booked!</DialogTitle>
+          <p className="sr-only">Your appointment has been successfully booked.</p>
         </DialogHeader>
         <div className="mb-4 text-center">
           <div><b>Date:</b> {appointmentDetails?.date}</div>
