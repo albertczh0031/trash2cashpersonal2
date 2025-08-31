@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useChatNotifications } from "@/components/providers/ChatNotificationProvider";
 import ChatSidebar from "@/components/chat/ChatSidebar";
@@ -50,11 +50,14 @@ export default function ChatRoomPage() {
     }
   };
 
-  const fetchTypingStatus = useCallback(async () => {
+  const fetchTypingStatus = async () => {
     if (!token || !selectedChatroom) return;
+    
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/chat/typing/${selectedChatroom}/`, {
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
       });
       if (response.ok) {
         const data = await response.json();
@@ -63,11 +66,11 @@ export default function ChatRoomPage() {
     } catch (error) {
       console.error("Failed to fetch typing status:", error);
     }
-  }, [token, selectedChatroom]);
+  };
 
-  const markMessagesAsRead = useCallback(async (chatroomId) => {
+  const markMessagesAsRead = async (chatroomId) => {
     if (!token || !chatroomId) return;
-
+    
     try {
       const response = await fetch("http://127.0.0.1:8000/api/chat/mark-as-read/", {
         method: "POST",
@@ -77,14 +80,15 @@ export default function ChatRoomPage() {
         },
         body: JSON.stringify({ chatroom_id: chatroomId }),
       });
-
+      
       if (response.ok) {
+        // Immediately refresh unread counts to update the sidebar
         await fetchUnreadCounts();
       }
     } catch (error) {
       console.error("Failed to mark messages as read:", error);
     }
-  }, [token, fetchUnreadCounts]);
+  };
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -242,11 +246,12 @@ export default function ChatRoomPage() {
       })
       .then((messagesData) => {
         setMessages(messagesData);
+        // Mark messages as read when viewing the chatroom
         markMessagesAsRead(selectedChatroom);
       })
       .catch((err) => setError("Failed to load messages"))
       .finally(() => setLoading(false));
-  }, [token, selectedChatroom, markMessagesAsRead]);
+  }, [token, selectedChatroom]);
 
   // Auto-resolve current username from sent messages if we only have the ID
   useEffect(() => {
@@ -293,18 +298,22 @@ export default function ChatRoomPage() {
   // Poll for typing status every 1 second
   useEffect(() => {
     if (!token || !selectedChatroom) return;
+    
     const interval = setInterval(fetchTypingStatus, 1000);
     return () => clearInterval(interval);
-  }, [token, selectedChatroom, fetchTypingStatus]);
+  }, [token, selectedChatroom]);
 
   // Poll for chatroom updates every second to catch new messages and reorder
   useEffect(() => {
     if (!token) return;
+    
+    // Set up polling to refresh chatrooms and maintain order
     const interval = setInterval(() => {
       refreshChatrooms();
-    }, 1000);
+    }, 1000); // Every second
+    
     return () => clearInterval(interval);
-  }, [token, refreshChatrooms]);
+  }, [token]);
 
   // Cleanup typing timeout on unmount
   useEffect(() => {
@@ -330,8 +339,9 @@ export default function ChatRoomPage() {
   }, [selectedChatroom, setActiveViewingChatroom]);
 
   // Function to refresh chatrooms and maintain sorting
-  const refreshChatrooms = useCallback(async () => {
+  const refreshChatrooms = async () => {
     if (!token) return;
+    
     try {
       const response = await fetch("http://127.0.0.1:8000/api/chat/my-chatrooms/", {
         headers: {
@@ -339,20 +349,24 @@ export default function ChatRoomPage() {
           "Authorization": `Bearer ${token}`,
         },
       });
+      
       if (response.ok) {
         const data = await response.json();
+        // Sort chatrooms by last message timestamp (most recent first)
         const sortedData = data.sort((a, b) => {
           const timeA = a.last_message ? new Date(a.last_message.timestamp).getTime() : 0;
           const timeB = b.last_message ? new Date(b.last_message.timestamp).getTime() : 0;
-          return timeB - timeA;
+          return timeB - timeA; // Descending order (newest first)
         });
         setChatrooms(sortedData);
       }
     } catch (error) {
       console.error("Failed to refresh chatrooms:", error);
     }
+    
+    // Also refresh unread counts
     fetchUnreadCounts();
-  }, [token, fetchUnreadCounts]);
+  };
 
   const sendMessage = async (e) => {
     e.preventDefault();

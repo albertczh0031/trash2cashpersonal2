@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import ListingItemCard from '@/components/marketplace/ListingItemCard';
 import MessageSellerDialog from '@/components/marketplace/MessageSellerDialog';
 import { Input } from '@/components/ui/input';
@@ -138,20 +138,17 @@ export default function BuyPage() {
     setLoading(false);
   };
 
-  const updateFilters = useCallback(
-    (newCategory = selectedCategory, newTime = selectedTime, newPrice = selectedPrice) => {
-      const categoryEndpoint = categories.find(c => c.name === newCategory)?.endpoint || "";
-      setSelectedCategoryEndpoint(categoryEndpoint);
-      const days = timeFilters.find(t => t.name === newTime)?.days || null;
-      const priceObj = priceFilters.find(p => p.name === newPrice) || {};
-      fetchItems(categoryEndpoint, days, priceObj.min, priceObj.max);
-    },
-    [selectedCategory, selectedTime, selectedPrice]
-  );
+  const updateFilters = (newCategory = selectedCategory, newTime = selectedTime, newPrice = selectedPrice) => {
+    const categoryEndpoint = categories.find(c => c.name === newCategory)?.endpoint || "";
+    setSelectedCategoryEndpoint(categoryEndpoint)
+    const days = timeFilters.find(t => t.name === newTime)?.days || null;
+    const priceObj = priceFilters.find(p => p.name === newPrice) || {};
+    fetchItems(categoryEndpoint, days, priceObj.min, priceObj.max);
+  };
 
   useEffect(() => {
     updateFilters();
-  }, [updateFilters]);
+  }, []);
 
   return (
     <div className="bg-gradient-to-b from-green-100 to-white min-h-screen flex flex-col items-center py-10 px-4">
