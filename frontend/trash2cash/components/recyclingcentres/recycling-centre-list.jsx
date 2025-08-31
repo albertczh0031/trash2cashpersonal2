@@ -20,7 +20,7 @@ export default function RecyclingCentreList() {
       return;
     }
 
-    fetch(`http://127.0.0.1:8000/api/validate-ott/?ott=${ott}`)
+    fetch(`http://trash2cashpersonal.onrender.com/api/validate-ott/?ott=${ott}`)
       .then((res) => res.json())
       .then((data) => {
         if (!data.valid) {
@@ -90,7 +90,7 @@ export default function RecyclingCentreList() {
     if (!lat || !lon || !category) return;
 
     fetch(
-      `http://127.0.0.1:8000/api/locate_centres/?latitude=${lat}&longitude=${lon}&category=${category}`,
+      `http://trash2cashpersonal.onrender.com/api/locate_centres/?latitude=${lat}&longitude=${lon}&category=${category}`,
     )
       .then((res) => res.json())
       .then((data) => {

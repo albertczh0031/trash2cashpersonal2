@@ -16,13 +16,13 @@ async function getValidAccessToken() {
   if (!accessToken) return null;
 
   // test the current access token
-  const res = await fetch("http://127.0.0.1:8000/api/user-profile/", {
+  const res = await fetch("http://trash2cashpersonal.onrender.com/api/user-profile/", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
   if (res.status === 401 && refreshToken) {
     // try refreshing the token
-    const refreshRes = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
+    const refreshRes = await fetch("http://trash2cashpersonal.onrender.com/api/token/refresh/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh: refreshToken }),
@@ -122,7 +122,7 @@ export default function UploadPhoto() {
       return;
     }
 
-    const responseUser = await fetch("http://127.0.0.1:8000/api/user-profile/", {
+    const responseUser = await fetch("http://trash2cashpersonal.onrender.com/api/user-profile/", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     if (responseUser.ok) {
@@ -131,7 +131,7 @@ export default function UploadPhoto() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/upload-and-analyze/", {
+      const response = await fetch("http://trash2cashpersonal.onrender.com/api/upload-and-analyze/", {
         method: "POST",
         body: formData,
       });
@@ -182,7 +182,7 @@ export default function UploadPhoto() {
         alert("You need to log in.");
       return;
     }
-    const res = await fetch("http://localhost:8000/api/generate-ott/", {
+    const res = await fetch("http://trash2cashpersonal.onrender.com/api/generate-ott/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

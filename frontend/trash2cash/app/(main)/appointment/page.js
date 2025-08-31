@@ -15,7 +15,7 @@ export default function AppointmentView() {
     const userToken = localStorage.getItem("access");
     if (!userToken) return;
 
-    const response = await fetch("http://127.0.0.1:8000/api/user-profile/", {
+    const response = await fetch("http://trash2cashpersonal.onrender.com/api/user-profile/", {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
@@ -35,7 +35,7 @@ export default function AppointmentView() {
     if (!userToken) return;
 
     const response = await fetch(
-      "http://127.0.0.1:8000/api/my-appointments/?status=Booked",
+      "http://trash2cashpersonal.onrender.com/api/my-appointments/?status=Booked",
       {
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -53,7 +53,7 @@ export default function AppointmentView() {
     const userToken = localStorage.getItem("access");
     if (!userToken) return;
 
-    const response = await fetch("http://127.0.0.1:8000/api/rewards/api/rewards/expired-vouchers/", {
+    const response = await fetch("http://trash2cashpersonal.onrender.com/api/rewards/api/rewards/expired-vouchers/", {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
@@ -77,7 +77,7 @@ export default function AppointmentView() {
     if (!userToken) return;
 
     const response = await fetch(
-      "http://127.0.0.1:8000/api/my-appointments/?status=Completed",
+      "http://trash2cashpersonal.onrender.com/api/my-appointments/?status=Completed",
       {
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -96,7 +96,7 @@ export default function AppointmentView() {
     if (!userToken) return;
 
     const response = await fetch(
-      "http://127.0.0.1:8000/api/rewards/api/rewards/redeemed-voucher-instances/",
+      "http://trash2cashpersonal.onrender.com/api/rewards/api/rewards/redeemed-voucher-instances/",
       {
         headers: {
           Authorization: `Bearer ${userToken}`,

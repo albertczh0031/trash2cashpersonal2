@@ -45,7 +45,7 @@ export default function CreateListingModal({ isOpen, onClose }) {
       // append multiple images with the same field name "images"
       images.forEach((file) => formData.append("images", file));
 
-      const res = await fetch("http://127.0.0.1:8000/api/marketplace/create-listing/", {
+      const res = await fetch("http://trash2cashpersonal.onrender.com/api/marketplace/create-listing/", {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access")}` },
         body: formData,

@@ -59,7 +59,7 @@ export default function MarketplacePage() {
   async function handleSellerClick() {
     setLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/get-seller-status/", {
+      const res = await fetch("http://trash2cashpersonal.onrender.com/api/get-seller-status/", {
         method: "GET",
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("access"),
@@ -89,7 +89,7 @@ export default function MarketplacePage() {
 
   async function requestSellerVerification() {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/request-seller-verification/", {
+      const res = await fetch("http://trash2cashpersonal.onrender.com/api/request-seller-verification/", {
         method: "POST",
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("access"),

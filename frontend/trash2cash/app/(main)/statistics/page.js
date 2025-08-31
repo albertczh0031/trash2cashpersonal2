@@ -33,7 +33,7 @@ export default function StatisticsPage() {
       setError(null);
       const startFormatted = formatForApi(start);
       const endFormatted = formatForApi(end);
-      const url = `http://127.0.0.1:8000/api/analytics/statistics/?start=${startFormatted}&end=${endFormatted}`;
+      const url = `http://trash2cashpersonal.onrender.com/api/analytics/statistics/?start=${startFormatted}&end=${endFormatted}`;
       console.log("Fetching:", url);
 
       const res = await fetch(url, { headers: { Accept: "application/json" } });

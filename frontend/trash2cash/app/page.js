@@ -73,7 +73,7 @@ export default function HomePage() {
 //     if (!validateForm()) return;
 //     console.log('Payload being sent:', formData);
 //     try {
-//       const response = await fetch('http://127.0.0.1:8000/api/signup/', {
+//       const response = await fetch('http://trash2cashpersonal.onrender.com/api/signup/', {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
 //         body: JSON.stringify(formData),

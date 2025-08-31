@@ -16,7 +16,7 @@ export default function MarketplacePage() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/marketplace/my-listings/",
+        "http://trash2cashpersonal.onrender.com/api/marketplace/my-listings/",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access")}`,
@@ -71,12 +71,12 @@ export default function MarketplacePage() {
     const firstImage = listing.images[0];
     imageUrl = firstImage.startsWith("http")
       ? firstImage
-      : `http://127.0.0.1:8000${firstImage}`;
+      : `http://trash2cashpersonal.onrender.com/${firstImage}`;
   } else if (typeof listing.images === "string") {
     // If it's just a string
     imageUrl = listing.images.startsWith("http")
       ? listing.images
-      : `http://127.0.0.1:8000${listing.images}`;
+      : `http://trash2cashpersonal.onrender.com/${listing.images}`;
   }
 
             return (

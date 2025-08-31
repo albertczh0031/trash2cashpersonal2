@@ -47,7 +47,7 @@ export default function MessageSellerDialog({
       const sellerId = listing.seller;
 
       // Create or get existing chatroom with Tomas
-      const response = await fetch("http://127.0.0.1:8000/api/chat/get-or-create-chatroom/", {
+      const response = await fetch("http://trash2cashpersonal.onrender.com/api/chat/get-or-create-chatroom/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export default function MessageSellerDialog({
         // Send the initial message with item context
         const contextMessage = `📦 Regarding "${listing.title}" (RM${listing.price}):\n\n${messageText}`;
         
-        const messageResponse = await fetch("http://127.0.0.1:8000/api/chat/send/", {
+        const messageResponse = await fetch("http://trash2cashpersonal.onrender.com/api/chat/send/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -27,7 +27,7 @@ const AppointmentPage = () => {
       return;
     }
 
-    fetch(`http://127.0.0.1:8000/api/validate-ott/?ott=${ott}`)
+    fetch(`http://trash2cashpersonal.onrender.com/api/validate-ott/?ott=${ott}`)
       .then((res) => res.json())
       .then((data) => {
         if (!data.valid) {
@@ -75,7 +75,7 @@ const AppointmentPage = () => {
     const isDropoff = searchParams.get("is_dropoff"); // Get the is_dropoff parameter from the URL
 
     fetch(
-      `http://127.0.0.1:8000/api/appointments/${centreId}/${formattedDate}/?is_dropoff=${isDropoff}`,
+      `http://trash2cashpersonal.onrender.com/api/appointments/${centreId}/${formattedDate}/?is_dropoff=${isDropoff}`,
     )
       .then((response) => {
         if (!response.ok) {
@@ -97,7 +97,7 @@ const AppointmentPage = () => {
   // To get a new access token when it expiress
   const refreshAccessToken = async (refreshToken) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
+      const response = await fetch("http://trash2cashpersonal.onrender.com/api/token/refresh/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +130,7 @@ const AppointmentPage = () => {
 
     try {
       let response = await fetch(
-        "http://127.0.0.1:8000/api/appointments/confirm/",
+        "http://trash2cashpersonal.onrender.com/api/appointments/confirm/",
         {
           method: "POST",
           headers: {
@@ -147,7 +147,7 @@ const AppointmentPage = () => {
         if (newAccessToken) {
           // Retry the request with the new token
           response = await fetch(
-            "http://127.0.0.1:8000/api/appointments/confirm/",
+            "http://trash2cashpersonal.onrender.com/api/appointments/confirm/",
             {
               method: "POST",
               headers: {

@@ -34,7 +34,7 @@ export default function ChatRoomPage() {
     if (!token || !selectedChatroom) return;
     
     try {
-      await fetch("http://127.0.0.1:8000/api/chat/typing/", {
+      await fetch("http://trash2cashpersonal.onrender.com/api/chat/typing/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export default function ChatRoomPage() {
     if (!token || !selectedChatroom) return;
     
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/chat/typing/${selectedChatroom}/`, {
+      const response = await fetch(`http://trash2cashpersonal.onrender.com/api/chat/typing/${selectedChatroom}/`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },
@@ -72,7 +72,7 @@ export default function ChatRoomPage() {
     if (!token || !chatroomId) return;
     
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/chat/mark-as-read/", {
+      const response = await fetch("http://trash2cashpersonal.onrender.com/api/chat/mark-as-read/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,7 +118,7 @@ export default function ChatRoomPage() {
     // Get current user info
     if (accessToken) {
       console.log('Fetching user profile with token:', accessToken); // Debug log
-      fetch("http://127.0.0.1:8000/api/user-profile/", {
+      fetch("http://trash2cashpersonal.onrender.com/api/user-profile/", {
         headers: {
           "Authorization": `Bearer ${accessToken}`,
         },
@@ -183,7 +183,7 @@ export default function ChatRoomPage() {
   useEffect(() => {
     if (!token) return;
     setLoading(true);
-    fetch("http://127.0.0.1:8000/api/chat/my-chatrooms/", {
+    fetch("http://trash2cashpersonal.onrender.com/api/chat/my-chatrooms/", {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -234,7 +234,7 @@ export default function ChatRoomPage() {
   useEffect(() => {
     if (!token || !selectedChatroom) return;
     setLoading(true);
-    fetch(`http://127.0.0.1:8000/api/chat/messages/${selectedChatroom}/`, {
+    fetch(`http://trash2cashpersonal.onrender.com/api/chat/messages/${selectedChatroom}/`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -277,7 +277,7 @@ export default function ChatRoomPage() {
     if (!token || !selectedChatroom) return;
     
     const interval = setInterval(() => {
-      fetch(`http://127.0.0.1:8000/api/chat/messages/${selectedChatroom}/`, {
+      fetch(`http://trash2cashpersonal.onrender.com/api/chat/messages/${selectedChatroom}/`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -343,7 +343,7 @@ export default function ChatRoomPage() {
     if (!token) return;
     
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/chat/my-chatrooms/", {
+      const response = await fetch("http://trash2cashpersonal.onrender.com/api/chat/my-chatrooms/", {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -384,7 +384,7 @@ export default function ChatRoomPage() {
     }
     
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/chat/send/`, {
+      const response = await fetch(`http://trash2cashpersonal.onrender.com/api/chat/send/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -396,7 +396,7 @@ export default function ChatRoomPage() {
       if (!response.ok) throw new Error('Failed to send message');
       
       // Immediately fetch updated messages
-      const messagesResponse = await fetch(`http://127.0.0.1:8000/api/chat/messages/${selectedChatroom}/`, {
+      const messagesResponse = await fetch(`http://trash2cashpersonal.onrender.com/api/chat/messages/${selectedChatroom}/`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,

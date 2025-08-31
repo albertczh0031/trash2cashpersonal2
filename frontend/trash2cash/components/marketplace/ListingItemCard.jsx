@@ -21,13 +21,13 @@ export default function ListingItemCard({ listing, onMessageSellerClick }) {
     try {
       let endpoint = null;
       if (listing.category === 'electronics') {
-        endpoint = `http://127.0.0.1:8000/api/marketplace/electronics/${listing.id}/`;
+        endpoint = `http://trash2cashpersonal.onrender.com/api/marketplace/electronics/${listing.id}/`;
       } else if (listing.category === 'clothes') {
-        endpoint = `http://127.0.0.1:8000/api/marketplace/clothes/${listing.id}/`;
+        endpoint = `http://trash2cashpersonal.onrender.com/api/marketplace/clothes/${listing.id}/`;
       } else if (listing.category === 'books-magazines') {
-        endpoint = `http://127.0.0.1:8000/api/marketplace/books-magazines/${listing.id}/`;
+        endpoint = `http://trash2cashpersonal.onrender.com/api/marketplace/books-magazines/${listing.id}/`;
       } else if (listing.category === 'furniture') {
-        endpoint = `http://127.0.0.1:8000/api/marketplace/furniture/${listing.id}/`;
+        endpoint = `http://trash2cashpersonal.onrender.com/api/marketplace/furniture/${listing.id}/`;
       }
       if (!endpoint) {
         onMessageSellerClick(listing); // fallback

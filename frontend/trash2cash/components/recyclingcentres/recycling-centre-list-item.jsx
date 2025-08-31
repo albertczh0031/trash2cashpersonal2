@@ -12,7 +12,7 @@ export default function RecyclingCentreListItem({ centre, option }) {
         alert("You need to log in.");
       return;
     }
-    const res = await fetch("http://localhost:8000/api/generate-ott/", {
+    const res = await fetch("http://trash2cashpersonal.onrender.com/api/generate-ott/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
