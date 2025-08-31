@@ -305,9 +305,9 @@ export default function UploadPhoto() {
             }}
         />
         <AppointmentDialog
-            showPopup={showPopup}
-            onClose={(open) => setShowPopup(open)}
-            onSelection={handleSelection}
+          showPopup={showConfirmation}
+          onClose={(open) => setShowConfirmation(open)}
+          onSelection={handleSelection}
         />
 
       </div>
