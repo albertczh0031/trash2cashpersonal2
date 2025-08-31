@@ -76,6 +76,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://trash2cashpersonal.onrender.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
