@@ -70,9 +70,9 @@ const AppointmentPage = () => {
   }, []);
 
   useEffect(() => {
-    const formattedDate = selectedDate.toISOString().split("T")[0]; // Re-formats the date as YYYY-MM-DD
-    const centreId = searchParams.get("centreId"); // Get the centre ID from the URL
-    const isDropoff = searchParams.get("is_dropoff"); // Get the is_dropoff parameter from the URL
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+    const centreId = searchParams.get("centreId");
+    const isDropoff = searchParams.get("is_dropoff");
 
     fetch(
       `http://127.0.0.1:8000/api/appointments/${centreId}/${formattedDate}/?is_dropoff=${isDropoff}`,
@@ -85,14 +85,14 @@ const AppointmentPage = () => {
       })
       .then((data) => {
         console.log("Fetched appointments:", data);
-        setAppointments(data); // Update the state with the fetched appointments
+        setAppointments(data);
         setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching appointments:", error);
         setLoading(false);
       });
-  }, [selectedDate]); // Re-fetch appointments whenever the selected date changes
+  }, [selectedDate, searchParams.get("centreId"), searchParams.get("is_dropoff")]);
 
   // To get a new access token when it expiress
   const refreshAccessToken = async (refreshToken) => {
