@@ -5,9 +5,11 @@ from dotenv import load_dotenv
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from google.cloud import vision
+from google.oauth2 import service_account
 from .models import *
 from users.models import *
 from django.utils.timezone import now
+import json
 from rest_framework.permissions import IsAuthenticated
 import uuid
 from .models import OneTimeToken
@@ -85,14 +87,22 @@ def upload_and_analyze(request):
             for chunk in file.chunks():
                 temp_file.write(chunk)
 
-        # Get the GCP key path from the environment variable
-        gcp_key_path = os.getenv('GCP_KEY_PATH')
-        if not gcp_key_path or not os.path.exists(gcp_key_path):
+        # Get the GCP key from the environment variable (JSON string)
+        gcp_key_json = os.getenv('GCP_KEY_PATH')
+        if not gcp_key_json:
             return Response({'error': 'Google Cloud key file is missing or invalid.'}, status=500)
 
-        # Call the Google Cloud Vision API
-        client = vision.ImageAnnotatorClient.from_service_account_file(gcp_key_path)
+        try:
+            # Load credentials from the environment variable directly as JSON string
+            credentials = service_account.Credentials.from_service_account_info(
+                json.loads(gcp_key_json)
+            )
+            client = vision.ImageAnnotatorClient(credentials=credentials)
 
+        except Exception as e:
+            return Response({'error': f'Error loading Google Cloud key: {str(e)}'}, status=500)
+
+        # Process the image with the Google Cloud Vision API
         with open(temp_path, 'rb') as image_file:
             content = image_file.read()
             image = vision.Image(content=content)
