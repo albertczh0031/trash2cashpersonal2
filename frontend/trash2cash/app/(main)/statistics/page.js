@@ -15,8 +15,10 @@ export default function StatisticsPage() {
   const [error, setError] = useState(null);
 
   // Example: set min/max dates for the slider
-  const minDate = "2025-07-08";
-  const maxDate = "2025-08-07";
+  const maxDate = new Date().toISOString().slice(0, 10);
+  const minDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
 
   // Convert slider date string like "9 Aug 2025" to "2025-08-09"
   const formatForApi = (dateOrStr) => {
@@ -31,7 +33,7 @@ export default function StatisticsPage() {
       setError(null);
       const startFormatted = formatForApi(start);
       const endFormatted = formatForApi(end);
-      const url = `https://trash2cashpersonal.onrender.com/api/analytics/statistics/?start=${startFormatted}&end=${endFormatted}`;
+      const url = `http://127.0.0.1:8000/api/analytics/statistics/?start=${startFormatted}&end=${endFormatted}`;
       console.log("Fetching:", url);
 
       const res = await fetch(url, { headers: { Accept: "application/json" } });
@@ -125,6 +127,32 @@ export default function StatisticsPage() {
   const getMaterialColor = (material) => 
     materialColors[material.toLowerCase()] || 'rgba(100, 100, 100, 0.6)';
 
+  // helper to check if any value in nested datasets > 0
+  const datasetsHasValues = (datasets) =>
+    Array.isArray(datasets) && datasets.some(ds => Array.isArray(ds.data) && ds.data.some(v => Number(v) > 0));
+
+  // check for each chart
+  const hasCentreData = datasetsHasValues(datasets);
+  const hasPieData = Array.isArray(pieData) && pieData.some(v => Number(v) > 0);
+  const hasDailyData = Array.isArray(dailyRecycled) && dailyRecycled.some(v => Number(v) > 0);
+  const hasAnyData = hasCentreData || hasPieData || hasDailyData;
+
+  // small empty-state element
+  const EmptyState = ({ message, containerStyle }) => (
+    <div
+      className="flex items-center justify-center p-6 rounded-lg bg-green-100/80 shadow-lg backdrop-blur-sm border border-green-200"
+      style={{
+        width: "100%",
+        boxSizing: "border-box",
+        ...containerStyle,
+      }}>
+      <div className="text-center text-gray-700 font-semibold">
+        {message}
+      </div>
+    </div>
+  );
+
+
   // Show loading message while data is being fetched
   if (loading) return <div>Loading...</div>;
   // Show message if no statistics are available
@@ -132,10 +160,17 @@ export default function StatisticsPage() {
 
   // Display the statistics data
   return (
-    <div className="p-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-8">
       <h1 className="text-2xl font-bold mb-4">Statistics</h1>
       <SliderRangeSelector minDate={minDate} maxDate={maxDate} onChange={handleDateRangeChange} />   
       <div className="mb-6" />
+
+    {/* if no charts have any data */}
+    {!loading && !error && !hasAnyData && (
+      <div className="mb-6">
+        <EmptyState message="No statistics to show for the selected date range." />
+      </div>
+    )}
 
       {/* Key for material colours */} 
       <div className="flex flex-wrap gap-4 mb-6">

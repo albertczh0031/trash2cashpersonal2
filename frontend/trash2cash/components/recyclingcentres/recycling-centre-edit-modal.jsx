@@ -24,7 +24,7 @@ export default function RecyclingCentreEditModal({ initialData, onSave }) {
 
   // Fetch categories on mount
   useEffect(() => {
-    fetch("https://trash2cashpersonal.onrender.com/api/categories/")
+    fetch("http://127.0.0.1:8000/api/categories/")
       .then((res) => res.json())
       .then(setCategories);
   }, []);
@@ -52,7 +52,7 @@ export default function RecyclingCentreEditModal({ initialData, onSave }) {
 
     try {
       const res = await fetch(
-        `https://trash2cashpersonal.onrender.com/api/recycler/${initialData.id}/`,
+        `http://127.0.0.1:8000/api/recycler/${initialData.id}/`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -76,12 +76,12 @@ export default function RecyclingCentreEditModal({ initialData, onSave }) {
       {/* Button that opens the modal dialog */}
       <DialogTrigger asChild>
         <Button variant="trash2cash">
-          Edit
+          <span className="text-green-900 font-semibold">Edit</span>
           <svg
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth="1.5"
-            className="size-6 stroke-white"
+            className="size-6 stroke-green-900"
           >
             <path
               strokeLinecap="round"

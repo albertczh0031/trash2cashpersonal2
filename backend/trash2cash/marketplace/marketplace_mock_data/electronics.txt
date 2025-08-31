@@ -1,0 +1,6 @@
+# username;title;description;price;image_filenames (comma-separated)
+mingdong;Bluetooth Speaker;Portable, great sound quality.;30.00;bluetooth_speaker.jpg,bluetooth_speaker2.jpg
+mingdong;Wireless Mouse;Ergonomic, long battery life.;15.00;wireless_mouse.jpg,wireless_mouse2.jpg
+chengyan;Smart Watch;Tracks fitness and notifications.;60.00;smart_watch.jpg,smart_watch2.jpg
+sherylee;E-Reader;Read books anywhere, anytime.;40.00;e-reader.jpg,e-reader2.jpg
+sherylee;Headphones;Noise-cancelling, comfortable fit.;25.00;headphones.jpg,headphones2.jpg

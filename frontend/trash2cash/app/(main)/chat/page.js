@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { useChatNotifications } from "@/components/providers/ChatNotificationProvider";
+import ChatSidebar from "@/components/chat/ChatSidebar";
+import ChatHeader from "@/components/chat/ChatHeader";
+import MessageList from "@/components/chat/MessageList";
+import MessageInput from "@/components/chat/MessageInput";
 
 export default function ChatRoomPage() {
   const searchParams = useSearchParams();
@@ -17,21 +22,19 @@ export default function ChatRoomPage() {
   const [recentSentMessages, setRecentSentMessages] = useState(new Set()); // Track messages we just sent
   const [typingUsers, setTypingUsers] = useState([]); // Track who is typing
   const [isTyping, setIsTyping] = useState(false); // Track if current user is typing
-  const messagesEndRef = useRef(null);
+  
+  // Use global chat notifications
+  const { unreadCounts, setActiveViewingChatroom, fetchUnreadCounts } = useChatNotifications();
+  
   const inputRef = useRef(null);
   const typingTimeoutRef = useRef(null);
-
-  // Auto-scroll to bottom when new messages arrive
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   // Typing indicator functions
   const setTypingStatus = async (isTyping) => {
     if (!token || !selectedChatroom) return;
     
     try {
-      await fetch("https://trash2cashpersonal.onrender.com/api/chat/typing/", {
+      await fetch("http://127.0.0.1:8000/api/chat/typing/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +54,7 @@ export default function ChatRoomPage() {
     if (!token || !selectedChatroom) return;
     
     try {
-      const response = await fetch(`https://trash2cashpersonal.onrender.com/api/chat/typing/${selectedChatroom}/`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/chat/typing/${selectedChatroom}/`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },
@@ -62,6 +65,28 @@ export default function ChatRoomPage() {
       }
     } catch (error) {
       console.error("Failed to fetch typing status:", error);
+    }
+  };
+
+  const markMessagesAsRead = async (chatroomId) => {
+    if (!token || !chatroomId) return;
+    
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/chat/mark-as-read/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ chatroom_id: chatroomId }),
+      });
+      
+      if (response.ok) {
+        // Immediately refresh unread counts to update the sidebar
+        await fetchUnreadCounts();
+      }
+    } catch (error) {
+      console.error("Failed to mark messages as read:", error);
     }
   };
 
@@ -83,12 +108,8 @@ export default function ChatRoomPage() {
     typingTimeoutRef.current = setTimeout(() => {
       setIsTyping(false);
       setTypingStatus(false);
-    }, 2000);
+    }, 500);
   };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access");
@@ -97,7 +118,7 @@ export default function ChatRoomPage() {
     // Get current user info
     if (accessToken) {
       console.log('Fetching user profile with token:', accessToken); // Debug log
-      fetch("https://trash2cashpersonal.onrender.com/api/user-profile/", {
+      fetch("http://127.0.0.1:8000/api/user-profile/", {
         headers: {
           "Authorization": `Bearer ${accessToken}`,
         },
@@ -162,7 +183,7 @@ export default function ChatRoomPage() {
   useEffect(() => {
     if (!token) return;
     setLoading(true);
-    fetch("https://trash2cashpersonal.onrender.com/api/chat/my-chatrooms/", {
+    fetch("http://127.0.0.1:8000/api/chat/my-chatrooms/", {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -173,17 +194,23 @@ export default function ChatRoomPage() {
         return res.json();
       })
       .then((data) => {
-        setChatrooms(data);
-        console.log('Chatrooms data:', data); // Debug log
+        // Sort chatrooms by last message timestamp (most recent first)
+        const sortedData = data.sort((a, b) => {
+          const timeA = a.last_message ? new Date(a.last_message.timestamp).getTime() : 0;
+          const timeB = b.last_message ? new Date(b.last_message.timestamp).getTime() : 0;
+          return timeB - timeA; // Descending order (newest first)
+        });
+        setChatrooms(sortedData);
+        console.log('Chatrooms data (sorted):', sortedData); // Debug log
         
         // Auto-select chatroom from URL parameter or first chatroom if none selected
         const urlChatroomId = chatroom_id ? parseInt(chatroom_id) : null;
-        if (urlChatroomId && data.some(room => room.id === urlChatroomId)) {
+        if (urlChatroomId && sortedData.some(room => room.id === urlChatroomId)) {
           // Select the chatroom from URL if it exists
           setSelectedChatroom(urlChatroomId);
-        } else if (data.length > 0 && !selectedChatroom) {
+        } else if (sortedData.length > 0 && !selectedChatroom) {
           // Fallback to first chatroom if none selected
-          setSelectedChatroom(data[0].id);
+          setSelectedChatroom(sortedData[0].id);
         }
         
         // If currentUser is still an ID, try to find the username from participants
@@ -207,7 +234,7 @@ export default function ChatRoomPage() {
   useEffect(() => {
     if (!token || !selectedChatroom) return;
     setLoading(true);
-    fetch(`https://trash2cashpersonal.onrender.com/api/chat/messages/${selectedChatroom}/`, {
+    fetch(`http://127.0.0.1:8000/api/chat/messages/${selectedChatroom}/`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -217,7 +244,11 @@ export default function ChatRoomPage() {
         if (!res.ok) throw new Error('Failed to fetch messages');
         return res.json();
       })
-      .then(setMessages)
+      .then((messagesData) => {
+        setMessages(messagesData);
+        // Mark messages as read when viewing the chatroom
+        markMessagesAsRead(selectedChatroom);
+      })
       .catch((err) => setError("Failed to load messages"))
       .finally(() => setLoading(false));
   }, [token, selectedChatroom]);
@@ -246,16 +277,20 @@ export default function ChatRoomPage() {
     if (!token || !selectedChatroom) return;
     
     const interval = setInterval(() => {
-      fetch(`https://trash2cashpersonal.onrender.com/api/chat/messages/${selectedChatroom}/`, {
+      fetch(`http://127.0.0.1:8000/api/chat/messages/${selectedChatroom}/`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
       })
         .then((res) => res.json())
-        .then(setMessages)
+        .then((messagesData) => {
+          setMessages(messagesData);
+          // Mark any new messages as read since user is actively viewing this chatroom
+          markMessagesAsRead(selectedChatroom);
+        })
         .catch(() => {}); // Silent fail for background refresh
-    }, 3000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [token, selectedChatroom]);
@@ -268,21 +303,47 @@ export default function ChatRoomPage() {
     return () => clearInterval(interval);
   }, [token, selectedChatroom]);
 
+  // Poll for chatroom updates every second to catch new messages and reorder
+  useEffect(() => {
+    if (!token) return;
+    
+    // Set up polling to refresh chatrooms and maintain order
+    const interval = setInterval(() => {
+      refreshChatrooms();
+    }, 1000); // Every second
+    
+    return () => clearInterval(interval);
+  }, [token]);
+
   // Cleanup typing timeout on unmount
   useEffect(() => {
     return () => {
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
+      // Clear active viewing chatroom when leaving the chat page
+      setActiveViewingChatroom(null);
     };
-  }, []);
+  }, [setActiveViewingChatroom]);
+
+  // Notify global provider about which chatroom is currently being viewed
+  useEffect(() => {
+    setActiveViewingChatroom(selectedChatroom);
+    
+    // Cleanup: clear the active chatroom when chatroom is deselected
+    return () => {
+      if (!selectedChatroom) {
+        setActiveViewingChatroom(null);
+      }
+    };
+  }, [selectedChatroom, setActiveViewingChatroom]);
 
   // Function to refresh chatrooms and maintain sorting
   const refreshChatrooms = async () => {
     if (!token) return;
     
     try {
-      const response = await fetch("https://trash2cashpersonal.onrender.com/api/chat/my-chatrooms/", {
+      const response = await fetch("http://127.0.0.1:8000/api/chat/my-chatrooms/", {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -291,11 +352,20 @@ export default function ChatRoomPage() {
       
       if (response.ok) {
         const data = await response.json();
-        setChatrooms(data);
+        // Sort chatrooms by last message timestamp (most recent first)
+        const sortedData = data.sort((a, b) => {
+          const timeA = a.last_message ? new Date(a.last_message.timestamp).getTime() : 0;
+          const timeB = b.last_message ? new Date(b.last_message.timestamp).getTime() : 0;
+          return timeB - timeA; // Descending order (newest first)
+        });
+        setChatrooms(sortedData);
       }
     } catch (error) {
       console.error("Failed to refresh chatrooms:", error);
     }
+    
+    // Also refresh unread counts
+    fetchUnreadCounts();
   };
 
   const sendMessage = async (e) => {
@@ -314,7 +384,7 @@ export default function ChatRoomPage() {
     }
     
     try {
-      const response = await fetch(`https://trash2cashpersonal.onrender.com/api/chat/send/`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/chat/send/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -326,7 +396,7 @@ export default function ChatRoomPage() {
       if (!response.ok) throw new Error('Failed to send message');
       
       // Immediately fetch updated messages
-      const messagesResponse = await fetch(`https://trash2cashpersonal.onrender.com/api/chat/messages/${selectedChatroom}/`, {
+      const messagesResponse = await fetch(`http://127.0.0.1:8000/api/chat/messages/${selectedChatroom}/`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -362,306 +432,44 @@ export default function ChatRoomPage() {
     }
   };
 
-  const getChatroomName = (room) => {
-    if (room.participants.length === 2) {
-      // Private chat - show the other person's name
-      const otherUser = room.participants.find(p => p !== currentUser);
-      return otherUser || `Chat #${room.id}`;
-    } else {
-      // Group chat
-      return `Group Chat (${room.participants.length} members)`;
-    }
-  };
-
   return (
-    <>
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 60%, 100% { opacity: 1; }
-          30% { opacity: 0.3; }
-        }
-      `}</style>
-      <div style={{ display: "flex", height: "90vh", maxHeight: "800px", border: "1px solid #e1e5e9", borderRadius: "8px", overflow: "hidden", backgroundColor: "#fff" }}>
-      {/* Sidebar */}
-      <div style={{ 
-        width: "300px", 
-        borderRight: "1px solid #e1e5e9", 
-        padding: "1rem", 
-        overflowY: "auto",
-        backgroundColor: "#f8f9fa"
-      }}>
-        <h3 style={{ margin: "0 0 1rem 0", color: "#1a202c", fontSize: "1.25rem" }}>Messages</h3>
-        
-        {error && (
-          <div style={{ 
-            background: "#fed7d7", 
-            color: "#c53030", 
-            padding: "0.5rem", 
-            borderRadius: "4px", 
-            marginBottom: "1rem",
-            fontSize: "0.875rem"
-          }}>
-            {error}
-          </div>
-        )}
-        
-        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {loading && chatrooms.length === 0 ? (
-            <li style={{ padding: "1rem", textAlign: "center", color: "#666" }}>Loading...</li>
-          ) : Array.isArray(chatrooms) && chatrooms.length > 0 ? (
-            chatrooms.map((room) => (
-              <li
-                key={room.id}
-                style={{
-                  cursor: "pointer",
-                  background: selectedChatroom === room.id ? "#e2e8f0" : "transparent",
-                  padding: "0.75rem",
-                  borderRadius: "6px",
-                  marginBottom: "0.5rem",
-                  border: selectedChatroom === room.id ? "1px solid #cbd5e0" : "1px solid transparent",
-                  transition: "all 0.2s",
-                }}
-                onClick={() => setSelectedChatroom(room.id)}
-                onMouseEnter={(e) => {
-                  if (selectedChatroom !== room.id) {
-                    e.target.style.backgroundColor = "#f7fafc";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (selectedChatroom !== room.id) {
-                    e.target.style.backgroundColor = "transparent";
-                  }
-                }}
-              >
-                <div style={{ fontWeight: "600", color: "#2d3748", marginBottom: "0.25rem" }}>
-                  {getChatroomName(room)}
-                </div>
-                {room.last_message && (
-                  <div style={{ 
-                    color: "#718096", 
-                    fontSize: "0.75rem", 
-                    marginBottom: "0.25rem",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
-                  }}>
-                    <strong>{room.last_message.sender}:</strong> {room.last_message.content}
-                  </div>
-                )}
-                <small style={{ color: "#718096", fontSize: "0.7rem" }}>
-                  {room.last_message 
-                    ? formatTimestamp(room.last_message.timestamp)
-                    : `${room.participants.length} participant${room.participants.length !== 1 ? 's' : ''}`
-                  }
-                </small>
-              </li>
-            ))
-          ) : (
-            <li style={{ padding: "1rem", textAlign: "center", color: "#718096" }}>
-              No chatrooms found.
-            </li>
-          )}
-        </ul>
-      </div>
+    <div style={{ display: "flex", height: "90vh", maxHeight: "800px", border: "1px solid #e1e5e9", borderRadius: "8px", overflow: "hidden", backgroundColor: "#fff" }}>
+      <ChatSidebar
+        chatrooms={chatrooms}
+        selectedChatroom={selectedChatroom}
+        setSelectedChatroom={setSelectedChatroom}
+        unreadCounts={unreadCounts}
+        loading={loading}
+        error={error}
+        currentUser={currentUser}
+        formatTimestamp={formatTimestamp}
+      />
 
       {/* Main Chat Area */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         {selectedChatroom ? (
           <>
-            {/* Chat Header */}
-            <div style={{ 
-              padding: "1rem", 
-              borderBottom: "1px solid #e1e5e9", 
-              backgroundColor: "#fff",
-              borderBottomLeftRadius: "0",
-              borderBottomRightRadius: "0"
-            }}>
-              <h4 style={{ margin: 0, color: "#1a202c" }}>
-                {chatrooms.find(room => room.id === selectedChatroom) && 
-                 getChatroomName(chatrooms.find(room => room.id === selectedChatroom))}
-              </h4>
-              <small style={{ color: "#718096" }}>
-                {chatrooms.find(room => room.id === selectedChatroom)?.participants.join(", ")}
-              </small>
-              {/* DEBUG INFO - TO BE REMOVED */}
-              <div style={{ fontSize: "0.75rem", color: "#999", marginTop: "0.5rem" }}>
-                Debug: Current user = &quot;{currentUser || 'not set'}&quot; (ID: {currentUserId || 'not set'})
-              </div>
-            </div>
+            <ChatHeader
+              chatrooms={chatrooms}
+              selectedChatroom={selectedChatroom}
+              currentUser={currentUser}
+              currentUserId={currentUserId}
+            />
 
-            {/* Messages Area */}
-            <div style={{ 
-              flex: 1, 
-              overflowY: "auto", 
-              padding: "1rem",
-              backgroundColor: "#f7fafc"
-            }}>
-              {messages.length === 0 ? (
-                <div style={{ textAlign: "center", color: "#718096", marginTop: "2rem" }}>
-                  No messages yet. Start the conversation!
-                </div>
-              ) : (
-                messages.map((msg) => {
-                  // Determine if this is the current user's message
-                  const isMyMessage = (() => {
-                    // If currentUserId is available, use it (most reliable)
-                    if (currentUserId !== null && currentUserId !== undefined) {
-                      return parseInt(msg.sender_id) === parseInt(currentUserId);
-                    }
-                    
-                    // If currentUser is a numeric string (sometimes happens), try to use it as ID
-                    if (currentUser && !isNaN(currentUser)) {
-                      return parseInt(msg.sender_id) === parseInt(currentUser);
-                    }
-                    
-                    // Fallback to username comparison
-                    if (currentUser && msg.sender) {
-                      return msg.sender.toLowerCase().trim() === currentUser.toLowerCase().trim();
-                    }
-                    
-                    return false;
-                  })();
-                  
-                  console.log(`Message: "${(msg.content || msg.text || '').substring(0, 20)}..." - Sender ID: ${msg.sender_id} Current User: ${currentUser} Current User ID: ${currentUserId} Is My Message: ${isMyMessage}`);
-                  
-                  console.log('Message:', msg.content, 'Sender:', msg.sender, 'Sender ID:', msg.sender_id, 'Current User:', currentUser, 'Current User ID:', currentUserId, 'Is My Message:', isMyMessage);
-                  
-                  return (
-                    <div 
-                      key={msg.id} 
-                      style={{ 
-                        marginBottom: "1rem",
-                        display: "flex",
-                        flexDirection: isMyMessage ? "row-reverse" : "row",
-                        justifyContent: isMyMessage ? "flex-end" : "flex-start",
-                      }}
-                    >
-                      <div style={{
-                        maxWidth: "70%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "18px",
-                        backgroundColor: isMyMessage ? "#3182ce" : "#fff",
-                        color: isMyMessage ? "#fff" : "#1a202c",
-                        border: isMyMessage ? "none" : "1px solid #e1e5e9",
-                        boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-                        marginLeft: isMyMessage ? "auto" : "0",
-                        marginRight: isMyMessage ? "0" : "auto",
-                      }}>
-                        {!isMyMessage && (
-                          <div style={{ 
-                            fontSize: "0.75rem", 
-                            fontWeight: "600", 
-                            marginBottom: "0.25rem",
-                            color: "#3182ce"
-                          }}>
-                            {msg.sender}
-                          </div>
-                        )}
-                        <div style={{ wordBreak: "break-word" }}>{msg.content}</div>
-                        <div style={{ 
-                          fontSize: "0.65rem", 
-                          marginTop: "0.25rem",
-                          opacity: 0.7,
-                          textAlign: isMyMessage ? "right" : "left"
-                        }}>
-                          {formatTimestamp(msg.timestamp)}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-              {/* Typing indicator */}
-              {typingUsers.length > 0 && (
-                <div style={{ 
-                  padding: "0.5rem 1rem", 
-                  fontStyle: "italic", 
-                  color: "#718096", 
-                  fontSize: "0.875rem",
-                  marginBottom: "0.5rem"
-                }}>
-                  {typingUsers.length === 1 
-                    ? `${typingUsers[0].username} is typing`
-                    : `${typingUsers.map(u => u.username).join(", ")} are typing`
-                  }
-                  <span style={{ 
-                    display: "inline-block", 
-                    width: "4px", 
-                    height: "4px", 
-                    borderRadius: "50%", 
-                    backgroundColor: "#718096", 
-                    margin: "0 2px",
-                    animation: "pulse 1.5s infinite"
-                  }}></span>
-                  <span style={{ 
-                    display: "inline-block", 
-                    width: "4px", 
-                    height: "4px", 
-                    borderRadius: "50%", 
-                    backgroundColor: "#718096", 
-                    margin: "0 2px",
-                    animation: "pulse 1.5s infinite 0.5s"
-                  }}></span>
-                  <span style={{ 
-                    display: "inline-block", 
-                    width: "4px", 
-                    height: "4px", 
-                    borderRadius: "50%", 
-                    backgroundColor: "#718096", 
-                    margin: "0 2px",
-                    animation: "pulse 1.5s infinite 1s"
-                  }}></span>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
+            <MessageList
+              messages={messages}
+              currentUser={currentUser}
+              currentUserId={currentUserId}
+              typingUsers={typingUsers}
+              formatTimestamp={formatTimestamp}
+            />
 
-            {/* Message Input */}
-            <form 
-              onSubmit={sendMessage} 
-              style={{ 
-                padding: "1rem", 
-                borderTop: "1px solid #e1e5e9", 
-                backgroundColor: "#fff",
-                display: "flex", 
-                gap: "0.5rem",
-                alignItems: "center"
-              }}
-            >
-              <input
-                ref={inputRef}
-                value={input}
-                onChange={handleInputChange}
-                style={{ 
-                  flex: 1, 
-                  padding: "0.75rem 1rem", 
-                  border: "1px solid #e1e5e9",
-                  borderRadius: "20px",
-                  outline: "none",
-                  fontSize: "0.875rem"
-                }}
-                placeholder="Type your message..."
-                disabled={loading}
-                onFocus={(e) => e.target.style.borderColor = "#3182ce"}
-                onBlur={(e) => e.target.style.borderColor = "#e1e5e9"}
-              />
-              <button 
-                type="submit" 
-                disabled={loading || !input.trim()}
-                style={{ 
-                  padding: "0.75rem 1.5rem",
-                  backgroundColor: loading || !input.trim() ? "#cbd5e0" : "#3182ce",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "20px",
-                  cursor: loading || !input.trim() ? "not-allowed" : "pointer",
-                  fontSize: "0.875rem",
-                  fontWeight: "600"
-                }}
-              >
-                {loading ? "Sending..." : "Send"}
-              </button>
-            </form>
+            <MessageInput
+              input={input}
+              loading={loading}
+              handleInputChange={handleInputChange}
+              sendMessage={sendMessage}
+            />
           </>
         ) : (
           <div style={{ 
@@ -677,6 +485,5 @@ export default function ChatRoomPage() {
         )}
       </div>
     </div>
-    </>
   );
 }

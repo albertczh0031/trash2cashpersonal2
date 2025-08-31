@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ListingItem from "./ListingItem";
+import ListingItemCard from '@/components/marketplace/ListingItemCard';
+import MessageSellerDialog from '@/components/marketplace/MessageSellerDialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +15,31 @@ import {
 import { ChevronDown, ArrowDownUp, Filter } from 'lucide-react';
 
 export default function BuyPage() {
+  const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState(null);
+
+  const handleMessageSellerClick = async (listing) => {
+    if (listing.seller_username) {
+      setSelectedListing(listing);
+      setIsMessageDialogOpen(true);
+      return;
+    }
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/users/${listing.seller}/`);
+      const data = await res.json();
+      setSelectedListing({
+        ...listing,
+        seller_username: data.username || "Unknown",
+      });
+      setIsMessageDialogOpen(true);
+    } catch (err) {
+      setSelectedListing({
+        ...listing,
+        seller_username: "Unknown",
+      });
+      setIsMessageDialogOpen(true);
+    }
+  };
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -40,6 +66,7 @@ export default function BuyPage() {
     { name: "Clothes", endpoint: "clothes" },
     { name: "Books & Magazines", endpoint: "books-magazines" },
     { name: "Furniture", endpoint: "furniture" },
+    { name: "Miscellaneous", endpoint: "misc-items" }
   ];
 
   const timeFilters = [
@@ -68,29 +95,41 @@ export default function BuyPage() {
   const fetchItems = async (categoryEndpoint = "", days = null, min = null, max = null) => {
     setLoading(true);
     let baseurl = categoryEndpoint
-      ? `https://trash2cashpersonal.onrender.com/api/marketplace/${categoryEndpoint}/`
-      : `https://trash2cashpersonal.onrender.com/api/marketplace/all-items/`;
+      ? `http://127.0.0.1:8000/api/marketplace/${categoryEndpoint}/`
+      : `http://127.0.0.1:8000/api/marketplace/all-items/`;
     let url = query 
       ? baseurl + `?search=${query}&days=${days}&min=${min}&max=${max}`
-      : baseurl + `?days=${days}&min=${min}&max=${max}`
-
-    // You can pass filters to backend here
-    // Example: url += `days=${days}&min=${min}&max=${max}`;
+      : baseurl + `?days=${days}&min=${min}&max=${max}`;
 
     const res = await fetch(url);
     let data = await res.json();
 
-    // Apply frontend filtering for now
-  if (days !== null) {
-    const now = new Date();
-    const cutoff = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
+    // Filter out listings where the seller is the current user
+    let currentUserId = null;
+    if (typeof window !== "undefined") {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        try {
+          const userObj = JSON.parse(userStr);
+          currentUserId = userObj.id;
+        } catch {}
+      }
+    }
+    if (currentUserId) {
+      data = data.filter(item => String(item.seller) !== String(currentUserId));
+    }
 
-    data = data.filter(item => {
-        if (!item.date) return false; // skip if missing date
-        const itemDate = new Date(item.date);
-        return itemDate.getTime() >= cutoff.getTime();
-    });
-  }
+    // Apply frontend filtering for now
+    if (days !== null) {
+      const now = new Date();
+      const cutoff = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
+
+      data = data.filter(item => {
+          if (!item.date) return false; // skip if missing date
+          const itemDate = new Date(item.date);
+          return itemDate.getTime() >= cutoff.getTime();
+      });
+    }
 
     if (min !== null) data = data.filter(item => item.price >= min);
     if (max !== null) data = data.filter(item => item.price <= max);
@@ -268,7 +307,7 @@ export default function BuyPage() {
       </div>
 
       {/* Recommended Title */}
-      <h1 className="text-3xl font-bold ml-15 mb-6 mt-2 self-start w-full max-w-7xl">
+      <h1 className="text-3xl font-bold mb-6 mt-2 self-start w-full max-w-7xl">
         Recommended for You
       </h1>
 
@@ -292,17 +331,40 @@ export default function BuyPage() {
               }
               return 0;
             })
-            .map(item => (
-              <ListingItem
-                key={item.id}
+            .map((item, idx) => (
+              <ListingItemCard
+                key={`${item.id ?? idx}-${idx}`}
                 listing={{
                   ...item,
-                  images: Array.isArray(item.images) ? item.images : [item.images],
+                  seller_username: item.seller_username || item.seller?.username || "Unknown",
+                  images: Array.isArray(item.images)
+                    ? item.images.map(img =>
+                        img.startsWith("http") ? img : `http://127.0.0.1:8000${img}`
+                      )
+                    : item.images
+                    ? [`http://127.0.0.1:8000${item.images}`]
+                    : [],
                 }}
+                onMessageSellerClick={() => handleMessageSellerClick({
+                  ...item,
+                  images: Array.isArray(item.images)
+                    ? item.images.map(img =>
+                        img.startsWith("http") ? img : `http://127.0.0.1:8000${img}`
+                      )
+                    : item.images
+                    ? [`http://127.0.0.1:8000${item.images}`]
+                    : [],
+                })}
               />
-            ))}
+            ))
+          }
         </div>
       )}
+      <MessageSellerDialog
+        listing={selectedListing}
+        isOpen={isMessageDialogOpen}
+        onOpenChange={setIsMessageDialogOpen}
+      />
     </div>
   );
 }

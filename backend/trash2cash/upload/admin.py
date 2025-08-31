@@ -28,4 +28,6 @@ class RecyclableIdentifierAdmin(admin.ModelAdmin):
     list_filter = ('category',)  
     search_fields = ('category', 'subcategory')  
     list_editable = ['category'] 
-    list_display_links = ('subcategory',) 
+    list_display_links = ('subcategory',)
+
+admin.site.register(OneTimeToken)

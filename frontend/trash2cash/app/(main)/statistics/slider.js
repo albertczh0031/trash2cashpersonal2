@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Range } from "react-range";
 
-export default function SliderRangeSelector({ minDate, maxDate, onChange }) {
-const minTimestamp = new Date(minDate).getTime();
-const maxTimestamp = new Date(maxDate).getTime();
+export default function SliderRangeSelector({ onChange }) {
+const today = new Date();
+today.setHours(0, 0, 0, 0); // normalize to midnight
+// const maxTimestamp = today.getTime();
+const maxTimestamp = Date.now(); // instead of midnight
+
+const minDateObj = new Date(today);
+minDateObj.setDate(minDateObj.getDate() - 90);
+const minTimestamp = minDateObj.getTime();
+
 
 // Load saved range or default to full range
 const [values, setValues] = useState(() => {
@@ -11,10 +18,25 @@ const [values, setValues] = useState(() => {
     return saved ? JSON.parse(saved) : [minTimestamp, maxTimestamp];
 });
 
-// Sync values to localStorage whenever they change
 useEffect(() => {
-    localStorage.setItem("sliderRange", JSON.stringify(values));
-}, [values]);
+  const interval = setInterval(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // normalize to midnight
+    const newMax = today.getTime();
+    const newMin = new Date(today);
+    newMin.setDate(newMin.getDate() - 90);
+
+    setValues((prev) => {
+      // if user kept the end at "yesterday", bump it to today
+      if (prev[1] >= newMax - 24 * 60 * 60 * 1000) {
+        return [newMin.getTime(), newMax];
+      }
+      return prev; // user chose a custom range, don't overwrite
+    });
+  }, 60 * 60 * 1000); // check hourly
+
+  return () => clearInterval(interval);
+}, []);
 
 
 // Converts a timestamp (milliseconds) into a readable date string in the format "D Mon YYYY"
@@ -39,7 +61,7 @@ const markers = markerDays.map((days) => {
 const [start, end] = values[0] < values[1] ? [values[0], values[1]] : [values[1], values[0]];
 
 return (
-    <div className="flex flex-col gap-2 p-4 bg-white rounded shadow">
+<div className="flex flex-col gap-4 p-6 rounded-lg bg-green-100/80 shadow-lg backdrop-blur-sm border border-green-200">
     <label className="font-semibold mb-4">Select Date Range:</label>
     <div style={{ position: 'relative', width: '100%' }}>
         {/* Marker labels above the slider */}

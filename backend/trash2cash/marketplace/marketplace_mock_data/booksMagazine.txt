@@ -1,0 +1,6 @@
+# username;title;description;price;image_filenames (comma-separated)
+mingdong;The Great Gatsby;A classic novel by F. Scott Fitzgerald.;12.99;the_great_gatsby.jpg,the_great_gatsby2.jpg
+mingdong;National Geographic;A magazine about nature and science.;5.50;national_geographic.jpg,national_geographic2.jpg
+sherylee;Thank You for Smoking;A very helpful book to disencourage one from smoking;5;TYFS.jpg,TYFS2.jpg
+sherylee;The Littlest Penguin;A fun story for kids.;8.00;the_littlest_penguin.jpg,the_littlest_penguin2.jpg
+chengyan;Gardening for Beginners;Tips and tricks for starting your own garden.;15.00;gardening_for_beginners.jpg,gardening_for_beginners2.jpg

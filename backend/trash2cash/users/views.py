@@ -1,24 +1,24 @@
 import random
 
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
+from django.http import JsonResponse, HttpRequest
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_GET, require_POST
 
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import Appointment, OTP, Profile
-from .serializers import AppointmentSerializer
-from .serializers import UserSignupSerializer, LoginSerializer
+from .models import Appointment, OTP, Profile, Notification, RecyclingCentreAdmin, RecyclingCentre
+from .serializers import AppointmentSerializer, NotificationSerializer, UserSerializer, UserSignupSerializer, LoginSerializer
 
 from datetime import datetime
 import logging
@@ -349,3 +349,111 @@ class GetVerifiedStatusAPIView(APIView):
             verified = False
         
         return Response({"verified_status": verified})
+
+@permission_classes([IsAuthenticated])
+class GetAdminAppointmentsAPIView(APIView):
+    def get(self, request):
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            return Response(
+                {"error": "Profile not found for this user."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            recycling_centre_admin = RecyclingCentreAdmin.objects.get(admin=profile)
+        except RecyclingCentreAdmin.DoesNotExist:
+            return Response(
+                {"error": "This admin user is not assigned to any recycling centre."},
+                status=status.HTTP_403_FORBIDDEN   # better than 404 because user exists but has no permissions
+            )
+        except RecyclingCentreAdmin.MultipleObjectsReturned:
+            return Response(
+                {"error": "Multiple recycling centre assignments found for this admin."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        appointments = Appointment.objects.filter(centre=recycling_centre_admin.recycling_centre,status__in=["Booked", "Completed"])
+        serializer = AppointmentSerializer(appointments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    
+"""
+Seller verification
+"""
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def pending_sellers(request):
+    sellers = User.objects.filter(profile__request_seller=True)  # 👈 filter by profile
+    serializer = UserSerializer(sellers, many=True)
+    return Response(serializer.data)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def approve_seller(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        user.profile.is_seller = True
+        user.profile.request_seller = False
+        user.profile.save()
+        return Response({"message": f"{user.username} approved as seller!"})
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_seller_status(request):
+    try:
+        # Get the logged-in user's profile
+        profile = getattr(request.user, "profile", None)
+
+        if not profile:
+            return Response({"error": "Profile not found"}, status=404)
+
+        # Check seller status
+        if profile.is_seller:
+            return Response({"message": "Seller Verified"})
+        elif profile.request_seller:
+            return Response({"message": "Requesting Verification"})
+        else:
+            return Response({"message": "Not Verified"})
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def request_seller_verification(request):
+    try:
+        profile = request.user.profile
+        if profile.is_seller:
+            return Response({"message": "Already a verified seller"}, status=400)
+
+        if profile.request_seller:
+            return Response({"message": "Seller verification request already pending."}, status=400)
+
+        profile.request_seller = True
+        profile.save()
+
+        return Response({"message": "Request for seller verification submitted successfully."})
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+
+
+@permission_classes([IsAuthenticated])
+class GetUserNotificationsAPIView(APIView):
+    """
+    API view to get all unread notifications for the authenticated user.
+    Only returns notifications that are unread (is_read=False).
+    The notifications are ordered by creation date in descending order.
+    """
+
+    def get(self, request):
+        user = request.user
+        notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at').all()
+        serialiser = NotificationSerializer(notifications, many=True)
+        return Response(serialiser.data, status=status.HTTP_200_OK)

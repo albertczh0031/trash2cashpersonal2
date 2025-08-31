@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.db import models
 
 from users.models import Appointment, User
@@ -39,3 +41,14 @@ class RecyclableIdentifier(models.Model):
 
     def __str__(self):
         return f"{self.category} - {self.subcategory}" if self.subcategory else self.category
+
+class OneTimeToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def is_expired(self):
+        return (timezone.now() - self.created_at).total_seconds() > 1
+
+    def __str__(self):
+        return f"{self.user.username} - {self.token}"

@@ -41,7 +41,5 @@ yarn-error.log*
 next-env.d.ts
 
 # API keys and secrets
-# API keys and secrets
 gcp_key.json
-!package.json
-
+*.json

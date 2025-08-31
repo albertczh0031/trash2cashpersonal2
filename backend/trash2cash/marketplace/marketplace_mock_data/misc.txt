@@ -1,0 +1,8 @@
+# username;title;description;price;image_filenames (comma-separated)
+henry;Trumpet;YAMAHA trumpet bought in 2015;1000;trumpet.jpg,trumpet2.jpg
+pinguinon;Penguin Plushie;Selling this because I broke up with my BF;20;blue_penguin.jpg,pink_penguin.jpg
+tomas;Tea set;Selling this cuz grandma's gone;10;tea_set.jpg,tea_set2.jpg
+charmaine;Tote bag;White tote bag that I never use because I have a 100 of them;1;tote_bag.jpg,tote_bag2.jpg
+pinguinin;Penguin Plushie;Selling this because I broke up with my GF;30;pink_penguin.jpg,pink_penguin.jpg
+john_doe;Camping bag;Almost starved because I couldn't find it in the jungle;75;bag.jpg,bag2.jpg
+henry;Sickle;Very useful for gardening and reaping;40;sickle.jpg,sickle2.jpg

@@ -4,12 +4,27 @@ import { useRouter } from "next/navigation";
 export default function RecyclingCentreListItem({ centre, option }) {
   const router = useRouter();
 
-  const handleGoToRecycleCentre = () => {
+  const handleGoToRecycleCentre = async () => {
     // Navigate to /appointment-view-2 with the centre_id as a query parameter
     const isDropoff = option === "Dropoff";
-    router.push(
-      `/appointment-view-2?centreId=${centre.id}&is_dropoff=${isDropoff}`,
-    );
+    const token = localStorage.getItem("access"); // JWT
+      if (!token) {
+        alert("You need to log in.");
+      return;
+    }
+    const res = await fetch("http://localhost:8000/api/generate-ott/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // secure with JWT
+      },
+    });
+    const data = await res.json();
+    if (data.one_time_token) {
+      router.replace(`/appointment-view-2?centreId=${centre.id}&is_dropoff=${isDropoff}&ott=${encodeURIComponent(data.one_time_token)}`);
+    } else {
+      alert("Failed to generate secure token");
+    }
   };
 
   function timeFormat(timeStr) {

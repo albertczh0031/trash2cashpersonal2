@@ -15,7 +15,7 @@ export default function AppointmentView() {
     const userToken = localStorage.getItem("access");
     if (!userToken) return;
 
-    const response = await fetch("https://trash2cashpersonal.onrender.com/api/user-profile/", {
+    const response = await fetch("http://127.0.0.1:8000/api/user-profile/", {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
@@ -35,7 +35,7 @@ export default function AppointmentView() {
     if (!userToken) return;
 
     const response = await fetch(
-      "https://trash2cashpersonal.onrender.com/api/my-appointments/?status=Booked",
+      "http://127.0.0.1:8000/api/my-appointments/?status=Booked",
       {
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -53,7 +53,7 @@ export default function AppointmentView() {
     const userToken = localStorage.getItem("access");
     if (!userToken) return;
 
-    const response = await fetch("https://trash2cashpersonal.onrender.com/api/rewards/api/rewards/expired-vouchers/", {
+    const response = await fetch("http://127.0.0.1:8000/api/rewards/api/rewards/expired-vouchers/", {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
@@ -77,7 +77,7 @@ export default function AppointmentView() {
     if (!userToken) return;
 
     const response = await fetch(
-      "https://trash2cashpersonal.onrender.com/api/my-appointments/?status=Completed",
+      "http://127.0.0.1:8000/api/my-appointments/?status=Completed",
       {
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -96,7 +96,7 @@ export default function AppointmentView() {
     if (!userToken) return;
 
     const response = await fetch(
-      "https://trash2cashpersonal.onrender.com/api/rewards/api/rewards/redeemed-voucher-instances/",
+      "http://127.0.0.1:8000/api/rewards/api/rewards/redeemed-voucher-instances/",
       {
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -143,7 +143,7 @@ export default function AppointmentView() {
   }, [activeTab]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
+    <div className="min-h-screen bg-gradient-to-br from-green-100 to-green-200">
       {/* Header */}
       <Card className="bg-gradient-to-bl from-green-100 to-green-200  shadow-md w-full rounded-none">
         <CardContent className="p-6">
@@ -154,21 +154,21 @@ export default function AppointmentView() {
 
       <div className="flex justify-center my-4 gap-4">
         <Tabs
-          defaultValue="active"
+          defaultValue="Appointments"
           value={activeTab}
           onValueChange={handleTabChange}
           className="relative w-[300px]"
         >
           <TabsList className="relative flex w-full border border-gray-300 bg-white text-gray-800 overflow-hidden rounded-sm p-0">
             <div
-              className="absolute top-0 left-0 h-full w-1/2 bg-green-700 rounded-sm transition-transform duration-300 ease-in-out flex items-center justify-center"
+              className="absolute top-0 left-0 h-full w-1/2 bg-green-600 rounded-sm transition-transform duration-300 ease-in-out flex items-center justify-center"
               style={{
                 transform: activeTab === "active" ? "translateX(0%)" : "translateX(100%)",
                 zIndex: 30,
               }}
             >
               <span className="text-primary-foreground font-semibold select-none pointer-events-none">
-                {activeTab === "active" ? " Active" : "Past"}
+                {activeTab === "active" ? " Appointments" : "Transactions"}
               </span>
             </div>
 
@@ -176,14 +176,14 @@ export default function AppointmentView() {
               value="active"
               className="relative w-1/2 px-4 py-2 text-center font-medium select-none z-10 bg-green-200 text-green-900 hover:bg-green-300"
             >
-              Active
+              Appointments
             </TabsTrigger>
 
             <TabsTrigger
               value="past"
               className="relative w-1/2 px-4 py-2 text-center font-medium select-none z-10 bg-green-200 text-green-900 hover:bg-green-300"
             >
-              Past
+              Transactions
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -196,9 +196,9 @@ export default function AppointmentView() {
           ) : (
             <table className="table-auto border-collapse border border-input w-full">
               <thead>
-                <tr className="bg-green-700 text-white">
+                <tr className="bg-green-300 text-green-950">
                   <th className="border border-input px-4 py-2">Appointment</th>
-                  <th className="border border-input px-4 py-2">Ecopoints</th>
+                  <th className="border border-input px-4 py-2">Location</th>
                   <th className="border border-input px-4 py-2">Date</th>
                 </tr>
               </thead>
@@ -212,7 +212,7 @@ export default function AppointmentView() {
                       {appointment.appointment_id}
                     </td>
                     <td className="border border-input px-4 py-2">
-                      {appointment.points_earned}
+                      {appointment.centre_name}
                     </td>
                     <td className="border border-input px-4 py-2">
                       {new Date(appointment.date).toLocaleDateString()}
@@ -230,7 +230,7 @@ export default function AppointmentView() {
           ) : (
             <table className="table-auto border-collapse border border-input w-full">
               <thead>
-                <tr className="bg-green-700 text-white">
+                <tr className="bg-green-300 text-green-950">
                   <th className="border border-input px-4 py-2">Transaction</th>
                   <th className="border border-input px-4 py-2">Ecopoints</th>
                   <th className="border border-input px-4 py-2">Date</th>

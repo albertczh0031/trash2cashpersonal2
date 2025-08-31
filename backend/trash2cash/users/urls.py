@@ -1,11 +1,11 @@
 # users/views.py
-from django.urls import path
+from django.urls import path, include
 from .views import *
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import MyAppointmentsView, CustomAuthToken, change_password, GetAdminStatusAPIView, UserProfileView, OTPAPIView, GetEmailAPIView, GetVerifiedStatusAPIView, SendOTPView
+from .views import MyAppointmentsView, CustomAuthToken, change_password, GetAdminStatusAPIView, UserProfileView, OTPAPIView, GetEmailAPIView, GetVerifiedStatusAPIView, SendOTPView, get_seller_status
 
 urlpatterns = [
     path('my-appointments/', MyAppointmentsView.as_view()),  # <-- ADD THIS
@@ -25,4 +25,12 @@ urlpatterns = [
     path('api/getemail/', GetEmailAPIView.as_view(), name='get-email'),
     path('api/get-verification/', GetVerifiedStatusAPIView.as_view(), name='get-verification-status'),
     path("api/send-otp/", SendOTPView.as_view(), name="send-otp"),
+    path("api/get-admin-appointments/", GetAdminAppointmentsAPIView.as_view(), name="get-admin-appointments"),
+    path("pending-sellers/", pending_sellers, name="pending_sellers"),
+    path("approve-seller/<int:user_id>/", approve_seller, name="approve_seller"),
+    path('request-seller-verification/', request_seller_verification, name='request-seller-verification'),
+    path('get-seller-status/', get_seller_status, name='get-seller-status'),
+    path('api/notifications/', GetUserNotificationsAPIView.as_view(), name='notifications-list'),
+    path('api-auth/', include('rest_framework.urls')),
+
 ]

@@ -67,6 +67,9 @@ class Profile(models.Model):
     points = models.IntegerField(default=0)
     tier = models.ForeignKey(Tier, on_delete=models.SET_NULL, null=True, blank=True)  # Link to Tier
     is_verified = models.BooleanField(default=False)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    is_seller = models.BooleanField(default=False)
+    request_seller = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Profile(user={self.user.username}, street={self.street}, city={self.city}, postcode={self.postcode}, points={self.points})"
@@ -90,6 +93,8 @@ class Profile(models.Model):
         # Update the tier if it has changed
         tier_obj = Tier.objects.get(tier_desc=tier_desc)
         if self.tier != tier_obj:
+            self.create_tier_change_notification(old_tier=self.tier.tier_desc,
+                                                 new_tier=tier_obj)  # Create notification for tier change
             self.tier = tier_obj
             self.save(update_fields=['tier'])
 
@@ -102,8 +107,30 @@ class Profile(models.Model):
         self.update_tier()
 
     def save(self, *args, **kwargs):
+        if not self.tier:
+            self.tier = Tier.objects.get(tier_desc="Bronze")
         super().save(*args, **kwargs)
         self.update_tier()
+
+    def approve_seller(self):
+        self.seller_verified = True
+
+    def create_tier_change_notification(self, old_tier, new_tier):
+        """
+        Creates a notification for the user when their tier changes.
+        """
+        if self.tier != old_tier:
+            # Check if the new tier is higher than the old tier
+            tier_order = ["Bronze", "Silver", "Gold", "Platinum"]
+            if tier_order.index(new_tier.tier_desc) > tier_order.index(old_tier):
+                message = f"Your tier has been upgraded from {old_tier} to {new_tier}. You have {self.points} points! Enjoy your new benefits!"
+                Notification.objects.create(user=self.user, message=message)
+            elif tier_order.index(new_tier.tier_desc) < tier_order.index(old_tier):
+                message = f"Your tier has been changed from {old_tier} to {new_tier}. You have {self.points} points. Keep recycling to regain your tier!"
+                Notification.objects.create(user=self.user, message=message)
+
+
+
 
 @receiver(post_save, sender=Profile)
 def update_profile_tier(sender, instance, **kwargs):
@@ -169,3 +196,24 @@ class OTP(models.Model):
 
     def is_expired(self):
         return timezone.now() > self.created_at + timedelta(minutes=5)
+
+
+class RecyclingCentreAdmin(models.Model):
+    admin = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    recycling_centre = models.ForeignKey(RecyclingCentre, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Admin: {self.admin}, Recycling Centre: {self.recycling_centre}"
+
+class Notification(models.Model):
+    """
+    Notification model to store user notifications.
+    This model is used to send notifications to users about various events such as reward expiration and tier changes.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.TextField()
+    is_read = models.BooleanField(default=False) # Notifications are not shown to the user after they are read
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification for {self.user.username} - {self.message[:20]}..."

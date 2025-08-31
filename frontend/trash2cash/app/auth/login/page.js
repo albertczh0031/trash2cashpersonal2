@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,6 +12,12 @@ export default function LoginPage() {
     username: "",
     password: "",
   });
+
+  useEffect(() => {
+    // Preload signup page in background
+    router.prefetch("/auth/signup");
+  }, [router]);
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false); // To toggle password visibility
@@ -28,21 +35,35 @@ export default function LoginPage() {
     setLoading(true);
     setErrors({});
 
+    let userId = null;
     try {
       // 1. Authenticate with Django
-      const res = await fetch("https://trash2cashpersonal.onrender.com/api/token/", {
+      console.log("[Login] Submitting login form", formData);
+      const res = await fetch("http://localhost:8000/api/token/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok)
+      if (!res.ok) {
+        console.error("[Login] Login failed. Status:", res.status);
         throw new Error("Login failed. Invalid username or password.");
+      }
       const { access, refresh } = await res.json();
 
       // 2. Store tokens in localStorage
       localStorage.setItem("access", access);
       localStorage.setItem("refresh", refresh);
+
+      // 2.5. Store user object in localStorage for client-side use
+      try {
+        userId = extractUserIdFromToken(access); 
+        console.log("[Login] Extracted userId:", userId);
+        console.log("[Login] Saving user to localStorage", { id: userId, username: formData.username });
+        localStorage.setItem("user", JSON.stringify({ id: userId, username: formData.username }));
+      } catch (err) {
+        console.error("[Login] Failed to extract userId or save user to localStorage", err);
+      }
 
       // 3. Create server session with user data
       const sessionRes = await fetch("/api/session", {
@@ -53,7 +74,7 @@ export default function LoginPage() {
         },
         body: JSON.stringify({
           user: {
-            id: extractUserIdFromToken(access), // Implement this
+            id: userId,
             username: formData.username,
           },
         }),
@@ -62,7 +83,7 @@ export default function LoginPage() {
       if (!sessionRes.ok) throw new Error("Session creation failed");
 
       // 4. Check if verified
-      const verifiedRes = await fetch("https://trash2cashpersonal.onrender.com/api/get-verification/", {
+      const verifiedRes = await fetch("http://localhost:8000/api/get-verification/", {
         headers: {
           Authorization: `Bearer ${access}`,
         },
@@ -172,13 +193,18 @@ export default function LoginPage() {
               <u>Forgot your password?</u>
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-2 px-4 rounded bg-green-500 hover:bg-green-600 text-white font-medium ${loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"}`}
-          >
-            {loading ? "Logging in..." : "Log In"}
-          </button>
+<button
+  type="submit"
+  disabled={loading}
+  className={`w-full py-3 px-4 rounded-xl font-semibold text-white shadow-md flex items-center justify-center gap-2 transition-all duration-200
+    ${loading 
+      ? "bg-green-400 cursor-not-allowed" 
+      : "bg-green-600 hover:bg-green-700 active:bg-green-800 focus:ring-2 focus:ring-green-400 focus:outline-none"
+    }`}
+>
+  {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+  {loading ? "Logging in..." : "Log In"}
+</button>
         </form>
       </div>
     </main>

@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import VoucherItem from './VoucherItem';
 import { Card, CardContent } from '@/components/ui/card';
 
-const VOUCHER_API = 'https://trash2cashpersonal.onrender.com/api/rewards/get-voucher-instance/';
+const VOUCHER_API = 'http://127.0.0.1:8000/api/rewards/get-voucher-instance/';
 const TIER_PRIORITY = { Bronze: 1, Silver: 2, Gold: 3, Platinum: 4 };
 const TABS = { POINTS: 'points', UNREDEEMED: 'unredeemed', REDEEMED: 'redeemed' };
 
@@ -58,7 +58,7 @@ export default function RewardsPage() {
         console.warn("Access token might be expired, trying to refresh...");
 
         try {
-          const refreshRes = await fetch("https://trash2cashpersonal.onrender.com/api/token/refresh/", {
+          const refreshRes = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -101,7 +101,6 @@ export default function RewardsPage() {
   let sortedTiers = [];
   let nextTier = null;
   let nextThreshold = null;
-
   if (tierThresholds && Object.keys(tierThresholds).length > 0) {
     sortedTiers = Object.entries(tierThresholds)
       .sort(([, a], [, b]) => a - b)
@@ -117,7 +116,7 @@ export default function RewardsPage() {
 
   const isEligible = (voucherTier) => {
     const currentTier = user?.tier?.charAt(0).toUpperCase() + user?.tier?.slice(1).toLowerCase();
-    return TIER_PRIORITY[currentTier] >= TIER_PRIORITY[voucherTier]; 
+    return TIER_PRIORITY[currentTier] >= voucherTier; 
   };
 
   const eligibleVouchers = vouchers.filter((v) =>
@@ -125,8 +124,8 @@ export default function RewardsPage() {
   );
 
   const unredeemed = eligibleVouchers.filter((v) => {
-    const expiry = new Date(v.voucher.expiration_date);
-    const today = new Date();
+  const expiry = new Date(v.voucher.expiration_date);
+  const today = new Date();
 
     return !v.redeemed && expiry >= today;});
   const redeemed = eligibleVouchers.filter((v) => v.redeemed);

@@ -1,319 +1,316 @@
 "use client";
 
-import { useState, useRef, use } from "react";
-import { useRouter } from "next/navigation"; // Importing useRouter for navigation
-import "./css/UploadPhotoStyles.css"; // Import component-specific styles
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogHeader, DialogContent } from "@/components/ui/dialog";
-import { DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { UploadForm } from "@/components/upload/UploadForm";
+import { IdentificationDialog } from "@/components/upload/IdentificationDialog";
+import { CategoryDialog } from "@/components/upload/CategoryDialog";
+import { AppointmentDialog } from "@/components/upload/AppointmentDialog";
+import { UploadInstructions } from "@/components/upload/UploadInstructions";
 
-/**
- * UploadPhoto Component
- *  test run pipleline test 20
- * This component provides a user interface to:
- * - Upload a photo file (image)
- * - Input associated metadata (description, weight, brand)
- * - Preview the selected image
- * - Send the data to a backend API for analysis
- *
- * Features:
- * - Input sanitation and validation for security
- * - Safe file uploads
- * - Displays backend feedback (success or error message)
- */
+// helper function to get a valid access token
+async function getValidAccessToken() {
+  let accessToken = localStorage.getItem("access");
+  const refreshToken = localStorage.getItem("refresh");
+
+  if (!accessToken) return null;
+
+  // test the current access token
+  const res = await fetch("http://127.0.0.1:8000/api/user-profile/", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (res.status === 401 && refreshToken) {
+    // try refreshing the token
+    const refreshRes = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (refreshRes.ok) {
+      const data = await refreshRes.json();
+      accessToken = data.access;
+      localStorage.setItem("access", accessToken);
+      return accessToken;
+    } else {
+      // refresh token expired -> log out
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      return null;
+    }
+  }
+
+  return accessToken;
+}
+
+
 export default function UploadPhoto() {
-  // State hooks for managing form fields and upload states
-  const [selectedFile, setSelectedFile] = useState(null); // Stores the selected image file
-  const [preview, setPreview] = useState(null); // Stores the preview image URL
-  const [description, setDescription] = useState(""); // Stores item description
-  const [weight, setWeight] = useState(""); // Stores item weight
-  const [brand, setBrand] = useState(""); // Stores item brand
-  const [message, setMessage] = useState(""); // Stores response message from backend
-  const [identified, setIdentified] = useState(null); // Tracks if the item was identified
-  const [category, setCategory] = useState(""); // Identified category
-  const [categories, setCategories] = useState([]); // List of categories for manual selection
-  const [appointmentId, setAppointmentId] = useState(null); // Appointment ID
-  const [showPopup, setShowPopup] = useState(false); // Controls visibility of the confirmation popup
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [description, setDescription] = useState("");
+  const [weight, setWeight] = useState("");
+  const [brand, setBrand] = useState("");
+  const [message, setMessage] = useState("");
+  const [identified, setIdentified] = useState(null);
+  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [showCategoryDialog, setShowCategoryDialog] = useState(false);
+  const [showMessageDialog, setShowMessageDialog] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [appointmentDetails, setAppointmentDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // Ref hook for accessing the file input DOM element
   const fileInputRef = useRef(null);
-  const router = useRouter(); // Initialize router for navigation
+  const router = useRouter();
 
-  /**
-   * Sanitize input to remove potentially dangerous characters.
-   * Prevents injection attacks and enforces clean input.
-   *
-   * @param {string} value - Input value to sanitize
-   * @returns {string} - Sanitized string
-   */
-  const sanitizeInput = (value) => {
-    return value.replace(/[<>"';`\-]/g, "").trim();
-  };
+  const sanitizeInput = (value) => value.replace(/[<>"';`\-]/g, "").trim();
+  const isInputSafe = (value) => !/[<>"';`\-]|(\b(SELECT|INSERT|DELETE|DROP|UPDATE|OR|AND)\b)/i.test(value);
 
-  /**
-   * Validates input for known unsafe patterns like SQL keywords and special characters.
-   *
-   * @param {string} value - Input value to validate
-   * @returns {boolean} - True if input is safe, False if suspicious
-   */
-  const isInputSafe = (value) => {
-    const pattern =
-      /[<>"';`\-]|(\b(SELECT|INSERT|DELETE|DROP|UPDATE|OR|AND)\b)/i;
-    return !pattern.test(value);
-  };
-
-  /**
-   * Handles file selection and updates the preview.
-   *
-   * @param {Event} e - File input change event
-   */
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      setPreview(URL.createObjectURL(file)); // Generate a temporary preview URL
+      setPreview(URL.createObjectURL(file));
     }
   };
 
-  /**
-   * Handles the upload of the file and metadata to the backend API.
-   * Validates and sanitizes user input before sending.
-   * Handles backend response for success or error.
-   */
+  const handleClick = async () => {
+    setLoading(true); // disable button
+    try {
+      await handleUpload(); // your upload logic
+    } finally {
+      setLoading(false); // re-enable whether success or error
+    }
+  };
+
   const handleUpload = async () => {
-    // Reset state for results when a new upload starts
     setIdentified(null);
     setCategory("");
     setCategories([]);
-    setAppointmentId(null);
+    setMessage("");
 
-    // Validate all input fields
-    const allFields = [description, weight, brand];
-    for (const field of allFields) {
+    for (const field of [description, weight, brand]) {
       if (!isInputSafe(field)) {
-        alert("Potentially unsafe input detected. Please revise your entry.");
+        setMessage("Potentially unsafe input detected. Please revise your entry.");
         return;
       }
     }
 
-    // Sanitize user input
     const sanitizedDescription = sanitizeInput(description);
     const sanitizedWeight = sanitizeInput(weight);
     const sanitizedBrand = sanitizeInput(brand);
 
-    if (!selectedFile) return alert("Please select a file before uploading.");
+    if (!selectedFile) {
+      setMessage("Please select a file before uploading.");
+      return;
+    }
 
-    // Get the current date in YYYY-MM-DD format
     const currentDate = new Date().toISOString().split("T")[0];
-
-    // Prepare multipart form data
     const formData = new FormData();
     formData.append("file", selectedFile);
     formData.append("description", sanitizedDescription);
     formData.append("weight", sanitizedWeight);
     formData.append("brand", sanitizedBrand);
-    formData.append("centre_id", 0); // Placeholder for centre_id, replace with actual value
-    formData.append("date", currentDate); // Add the current date
+    formData.append("centre_id", 0);
+    formData.append("date", currentDate);
 
-    // Fetch user profile from the backend
-    const fetchUserProfile = async () => {
-      const accessToken = localStorage.getItem("access");
-      if (!accessToken) {
-        alert("You need to log in.");
-        return;
-      }
-      const response = await fetch("https://trash2cashpersonal.onrender.com/api/user-profile/", {
-        headers: {
-          "Authorization": `Bearer ${accessToken}`,
-        },
-      });
-      if (response.ok) {
-        const user = await response.json();
-        // Use user details as needed
-        console.log(user);
-        return user.username;
-      } else {
-        console.error("Failed to fetch user profile");
-      }
-    };
+    const accessToken = await getValidAccessToken();
+    if (!accessToken) {
+      setMessage("You need to log in.");
+      return;
+    }
 
-    formData.append("user_name", await fetchUserProfile());
+    const responseUser = await fetch("http://127.0.0.1:8000/api/user-profile/", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (responseUser.ok) {
+      const user = await responseUser.json();
+      formData.append("user_name", user.username);
+    }
 
     try {
-      // Send the POST request to the backend
-      const response = await fetch(
-        "https://trash2cashpersonal.onrender.com/api/upload-and-analyze/",
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
+      const response = await fetch("http://127.0.0.1:8000/api/upload-and-analyze/", {
+        method: "POST",
+        body: formData,
+      });
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle server-side error response
-        setMessage(data.error || "An error occurred while uploading the file.");
+        if (data && typeof data === "object" && !Array.isArray(data)) setMessage(data);
+        else setMessage(data.error || "An error occurred while uploading the file.");
       } else {
-        // Handle successful analysis
-        setMessage(data.message);
+        // Successful response
         setIdentified(data.identified);
         setCategory(data.category || "");
         setCategories(data.categories || []);
+        if (data.message) setMessage(data.message); // show API success message
+
+        // Reset form fields
+        setSelectedFile(null);
+        setPreview(null);
+        setDescription("");
+        setWeight("");
+        setBrand("");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+
+        // Show dialogs
+        if (data.identified === true && data.message) setShowMessageDialog(true);
+        else if (data.identified === false && data.message) setShowCategoryDialog(true);
+
+        if (data.appointment) {
+          setAppointmentDetails({
+            date: data.appointment.date,
+            time: data.appointment.time,
+            centre: data.appointment.centre_name || data.appointment.centre || "",
+          });
+          setShowConfirmation(true);
+        }
       }
-    } catch (error) {
-      console.error("Error during upload:", error);
+    } catch (err) {
+      console.error(err);
       setMessage("An error occurred while uploading the file.");
     }
-
-    // Reset form state after upload
-    setSelectedFile(null);
-    setPreview(null);
-    setDescription("");
-    setWeight("");
-    setBrand("");
   };
 
-  const handleConfirm = () => {
-    setShowPopup(true); // Show the popup when the user confirms
-  };
+  const handleConfirm = () => setShowPopup(true);
+  const handleSelection = async (option) => {
+    setShowPopup(false);
+    const token = localStorage.getItem("access"); // JWT
+      if (!token) {
+        alert("You need to log in.");
+      return;
+    }
+    const res = await fetch("http://localhost:8000/api/generate-ott/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // secure with JWT
+      },
+    });
 
-  const handleSelection = (option) => {
-    console.log(`Selected: ${option}, Category: ${category}`);
-    setShowPopup(false); // Close the popup
-    router.push(`/recycling-centres?category=${category}&option=${option}`); // Navigate to the next page
+    const data = await res.json();
+    if (data.one_time_token) {
+      router.replace(`/recycling-centres?category=${category}&option=${option}&ott=${encodeURIComponent(data.one_time_token)}`);
+    } else {
+      alert("Failed to generate secure token");
+    }
   };
 
   return (
-    <div className="container">
-      <h3 className="title">Upload a Photo</h3>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex flex-col items-center justify-start p-4 space-y-6">
+      {/* Keep UploadInstructions as-is */}
+      <div className="w-full max-w-screen-2xl">
+        <UploadInstructions />
+      </div>
 
-      {/* File Input */}
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        className="hidden-input"
-      />
+      {/* Main content */}
+      <div
+          className="max-w-md w-full p-6 shadow-lg border border-green-200 rounded-xl bg-white/70 backdrop-blur space-y-4">
+        <h1 className="text-2xl font-bold text-green-800 text-center">Upload a Photo</h1>
 
-      {/* Button to trigger file input */}
-      <button
-        onClick={() => fileInputRef.current?.click()}
-        className="file-button"
-      >
-        {selectedFile ? "Change File" : "Choose File"}
-      </button>
-
-      {/* Image Preview */}
-      {preview && <img src={preview} alt="Preview" className="preview-image" />}
-
-      {/* Description Input */}
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Enter description"
-        className="textarea"
-        rows={3}
-      />
-
-      {/* Weight Input */}
-      <input
-        type="number"
-        value={weight}
-        onChange={(e) => setWeight(e.target.value)}
-        placeholder="Weight (kg)"
-        className="input"
-        min="0"
-      />
-
-      {/* Brand Input */}
-      <input
-        type="text"
-        value={brand}
-        onChange={(e) => setBrand(e.target.value)}
-        placeholder="Brand name"
-        className="input"
-      />
-
-      {/* Upload Button */}
-      <button onClick={handleUpload} className="upload-button">
-        Upload
-      </button>
-
-      {/* Display Backend Message */}
-      {message && <p className="message">{message}</p>}
-
-      {identified === true && showPopup === false && (
-        <div>
-          <button onClick={() => handleConfirm(true)} className="upload-button">
-            Yes. Find me an appointment...
-          </button>
-        </div>
-      )}
-
-      {identified === false && (
-        <div>
-          <div className="flex justify-center items-center">
-            <Button className="bg-green-600">
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="dropdown justify-center items-center"
-              >
-                <option value="" className="text-lime-600">Select a category</option>
-                {[...new Set(categories)].map((cat) => (
-                  <option key={cat} value={cat} className="text-lime-600">
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </Button>
-          </div>
-          <p className="disclaimer">
-            Appointment will be manually verified. You will get a confirmation
-            email after verification.
-          </p>
-          {category && (
-            <button
-              onClick={() => handleConfirm(false)}
-              className="upload-button"
+        {/* Success/Error Message */}
+        {message && (
+            <div
+                className={`p-3 rounded ${
+                    identified
+                        ? "bg-green-100 text-green-700 border-green-300"
+                        : "bg-red-100 text-red-700 border-red-300"
+                } border text-sm`}
             >
-              Find me an appointment...
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Popup Modal */}
-      {showPopup == true && (
-        <Dialog>
-          <DialogTrigger className="upload-button">
-            Select type of appointment
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md items-center justify-center">
-            <DialogHeader className="text-center">
-              <DialogTitle>
-                For this appointment, would you like to..
-              </DialogTitle>
-            </DialogHeader>
-            <div className="flex space-x-5 items-center justify-center">
-              <Button
-                onClick={() => handleSelection("Pickup")}
-                className="bg-green-600"
-              >
-                Schedule Pickup
-              </Button>
-              <Button
-                onClick={() => handleSelection("Dropoff")}
-                className="bg-green-600"
-              >
-                Dropoff Manually
-              </Button>
+              {typeof message === "string" ? (
+                  message
+              ) : (
+                  Object.entries(message).map(([field, errors]) => {
+                    const label = field.charAt(0).toUpperCase() + field.slice(1);
+                    return (
+                        <div key={field}>
+                          <strong>{label}:</strong> {errors}
+                        </div>
+                    );
+                  })
+              )}
             </div>
-          </DialogContent>
-        </Dialog>
-      )}
+        )}
+
+        {/* Preview */}
+        {preview && (
+            <div
+                className="w-full h-48 border border-green-300 rounded-lg overflow-hidden flex items-center justify-center bg-green-50">
+              <img src={preview} alt="Preview" className="object-contain w-full h-full"/>
+            </div>
+        )}
+        {/* File button */}
+        <button
+            type="button"
+            className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-medium shadow-md transition"
+            onClick={() => fileInputRef.current?.click()}
+        >
+          {selectedFile ? "Change File" : "Choose File"}
+        </button>
+        <input type="file" className="hidden" ref={fileInputRef} onChange={handleFileChange}/>
+
+        {/* Form fields */}
+        <input
+            type="text"
+            placeholder="Description"
+            className="w-full p-3 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+        />
+        <input
+            type="text"
+            placeholder="Weight"
+            className="w-full p-3 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+        />
+        <input
+            type="text"
+            placeholder="Brand"
+            className="w-full p-3 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+        />
+
+
+        {/* Upload button */}
+        <button
+            type="button"
+            className={`w-full px-4 py-3 rounded-lg font-medium shadow-md transition
+        ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"}`}
+            onClick={handleClick}
+            disabled={loading}
+        >
+          {loading ? "Uploading..." : "Upload Photo"}
+        </button>
+
+        {/* Dialogs */}
+        <IdentificationDialog
+            showMessageDialog={showMessageDialog}
+            message={message}
+            onClose={(open) => setShowMessageDialog(open)}
+            onConfirm={handleConfirm}
+            onManualSelect={() => setShowCategoryDialog(true)}
+        />
+        <CategoryDialog
+            showCategoryDialog={showCategoryDialog}
+            categories={categories}
+            onClose={(open) => setShowCategoryDialog(open)}
+            onCategorySelect={(cat) => {
+              setCategory(cat);
+              setShowCategoryDialog(false);
+              setShowPopup(true);
+            }}
+        />
+        <AppointmentDialog
+            showPopup={showPopup}
+            onClose={(open) => setShowPopup(open)}
+            onSelection={handleSelection}
+        />
+
+      </div>
     </div>
   );
 }

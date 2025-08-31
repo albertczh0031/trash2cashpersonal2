@@ -31,3 +31,17 @@ services:
     ports:
       - "6379:6379"
 
+  celery-beat:
+    build: backend/trash2cash
+    command: celery -A trash2cash.task_queue beat --loglevel=info
+    working_dir: /app
+    volumes:
+      - ./backend/trash2cash:/app
+    depends_on:
+      - redis
+    environment:
+      - PYTHONPATH=/app
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    env_file:
+      - backend/trash2cash/.env
+

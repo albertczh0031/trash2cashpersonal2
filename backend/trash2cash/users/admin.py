@@ -1,15 +1,28 @@
 # users/admin.py
 
 from django.contrib import admin
-from .models import Profile
-from .models import Appointment
+from .models import Profile, Notification
+from django.utils.safestring import mark_safe
+from .models import Profile, RecyclingCentreAdmin, Appointment, Tier
 from rewards.models import Voucher
-from .models import Tier
 
-# admin.site.register(Appointment)
-admin.site.register(Profile)
 admin.site.register(Voucher)
 admin.site.register(Tier)
+admin.site.register(RecyclingCentreAdmin)
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['user_id','user', 'points', 'tier', 'is_verified', 'profile_picture_preview','is_seller']
+    list_editable = ['is_verified','is_seller']
+    readonly_fields = ['profile_picture_preview']
+
+    def profile_picture_preview(self, obj):
+        """Display a small preview of the profile picture in the admin list"""
+        if obj.profile_picture:
+            return mark_safe(f'<img src="{obj.profile_picture.url}" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />')
+        return "No Image"
+    profile_picture_preview.short_description = 'Profile Picture'
+
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
@@ -39,3 +52,10 @@ class AppointmentAdmin(admin.ModelAdmin):
             return obj.centre.name[:15] + ('...' if len(obj.centre.name) > 15 else '')
         return '-'
     centre_short.short_description = 'Centre'
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'message', 'created_at', 'is_read']
+    search_fields = ['user__username', 'message']
+    list_filter = ['is_read', 'created_at']
+    ordering = ['-created_at']

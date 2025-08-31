@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Profile
+from .models import Profile, Notification, RecyclingCentreAdmin
 from .models import Appointment
 from .models import OTP
 
@@ -107,11 +107,25 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
-        fields = ['appointment_id', 'date', 'time', 'points_earned', 'centre_name']  # Include centre_name
+        fields = ['appointment_id', 'date', 'time', 'points_earned', 'centre_name', 'status']  # Include centre_name and status
 
 
 class OTPSerializer(serializers.ModelSerializer):
     class Meta:
         model = OTP
         fields = ['otp']
-        
+
+class RecyclingCentreAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecyclingCentreAdmin
+        fields = ['admin', 'recycling_centre']
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email"]  # add only what you want to expose
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'user', 'message', 'is_read', 'created_at']

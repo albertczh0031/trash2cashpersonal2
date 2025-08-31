@@ -1,0 +1,6 @@
+# username;title;description;price;image_filenames (comma-separated)
+chengyan;Wooden Desk;Spacious desk for home office.;60.00;wooden_desk.jpg,wooden_desk2.jpg
+chengyan;Dining Table;Seats six, solid wood.;120.00;dining_table.jpg,dining_table2.jpg
+sherylee;Bookshelf;Tall, fits many books.;45.00;bookshelf.jpg,bookshelf2.jpg
+sherylee;Office Chair;Ergonomic, adjustable height.;35.00;office_chair.jpg,office_chair2.jpg
+mingdong;Bedside Table;Compact, with drawer.;28.00;bedside_table.jpg,bedside_table2.jpg

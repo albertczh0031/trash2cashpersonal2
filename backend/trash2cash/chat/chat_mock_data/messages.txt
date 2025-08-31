@@ -1,24 +1,287 @@
-1;pinguinin;Hey pinguinon! Are you still looking to sell those plastic bottles?;2025-08-05;14;30
-1;pinguinon;Yes, I still have them! When would you like to meet?;2025-08-05;14;45
-1;pinguinin;Great! I can meet you at the recycling center tomorrow.;2025-08-05;15;20
-1;pinguinon;Perfect! I'll bring them around 2pm.;2025-08-05;15;35
-2;pinguinin;Hi tomas! I heard you collect aluminum cans?;2025-08-06;12;20
-2;tomas;Hey pinguinin! Yes, I do. Do you have some to sell?;2025-08-06;12;45
-2;pinguinin;I have about 15kg. What's your rate?;2025-08-06;13;10
-2;tomas;I can offer $1.80 per kg. Sound good?;2025-08-06;13;30
-3;pinguinon;Tomas, are you interested in cardboard trading?;2025-08-06;16;15
-3;tomas;Absolutely! What kind of cardboard do you have?;2025-08-06;16;40
-3;pinguinon;Mostly clean boxes from online deliveries.;2025-08-06;17;25
-3;tomas;Perfect! I'll take whatever you have.;2025-08-06;18;10
-4;tomas;Camaroncin, still need those glass bottles?;2025-08-07;11;30
-4;camaroncin;Yes! Do you have clear or colored glass?;2025-08-07;12;15
-4;tomas;Mixed - mostly clear with some green ones.;2025-08-07;13;45
-4;camaroncin;Great! I need both types.;2025-08-07;14;20
-5;pinguinin;Hi camaroncin! I saw your post about electronic waste!;2025-08-07;14;30
-5;camaroncin;Hey pinguinin! Yes, I collect old phones and tablets.;2025-08-07;15;10
-5;pinguinin;I have some old laptops. Are you interested?;2025-08-07;15;45
-5;camaroncin;Definitely! What condition are they in?;2025-08-07;16;20
-6;pinguinon;Hi camaroncin! Want to coordinate our pickup schedules?;2025-08-08;10;15
-6;camaroncin;Good idea! When do you usually go to the center?;2025-08-08;11;20
-6;pinguinon;Tuesday and Friday mornings work best for me.;2025-08-08;12;35
-6;camaroncin;Perfect! I can join you on Fridays.;2025-08-08;13;15
+1;pinguinin;Hey! I saw your listing for the vintage desk. Is it still available?;2025-08-05;14;30
+1;pinguinon;Yes it is! Are you interested in taking a look?;2025-08-05;14;45
+1;pinguinin;Definitely! Could you send me more photos?;2025-08-05;15;20
+1;pinguinon;Sure! I'll upload some detail shots of the drawers;2025-08-05;15;35
+1;pinguinin;Perfect! What's your best price? I'm ready to buy today;2025-08-05;16;10
+2;pinguinin;Hi! Are you still selling the iPhone 12?;2025-08-06;12;20
+2;tomas;Hey! Yes, it's still available. Looking for $450;2025-08-06;12;45
+2;pinguinin;How's the battery life? Any scratches on the screen?;2025-08-06;13;10
+2;tomas;Battery health is at 89%, screen is perfect with screen protector since day one;2025-08-06;13;30
+2;pinguinin;That sounds great! Would you consider $400?;2025-08-06;13;50
+3;pinguinin;I'm interested in your coffee table listing;2025-08-07;14;30
+3;camaroncin;Great! It's solid wood, really well maintained;2025-08-07;15;10
+3;pinguinin;Could I come see it this weekend?;2025-08-07;15;45
+3;camaroncin;Sure! Saturday afternoon works for me;2025-08-07;16;20
+3;pinguinin;Perfect! I'll bring cash if I like it 😊;2025-08-07;16;35
+4;pinguinin;Hi! Is the bicycle you listed still for sale?;2025-08-08;10;15
+4;wenjian;Yes! It's a Trek hybrid bike, great condition;2025-08-08;10;30
+4;pinguinin;What size is it? I'm looking for a medium;2025-08-08;10;45
+4;wenjian;It's a medium! 21-speed, barely ridden;2025-08-08;11;00
+4;pinguinin;Perfect! Could you send more photos?;2025-08-08;11;15
+5;pinguinin;Hey Miguel! Interested in your dining table set;2025-08-09;09;20
+5;miguel;Hi! It's a 4-seater oak table with matching chairs;2025-08-09;09;35
+5;miguel;Perfect for small apartments or dining rooms;2025-08-09;09;40
+5;pinguinin;Looks beautiful in the photos! Is $280 firm?;2025-08-09;09;55
+5;miguel;I could do $250 if you can pick up this weekend;2025-08-09;10;10
+6;pinguinin;Hi Lambert! Is the washing machine still available?;2025-08-10;11;15
+6;lambert;Yes! It's a Bosch front-loader, 7kg capacity;2025-08-10;11;30
+6;pinguinin;Any issues with it? Why are you selling?;2025-08-10;11;45
+6;lambert;Works perfectly! Just upgrading to a larger size;2025-08-10;12;00
+6;pinguinin;Great! When could I come check it out?;2025-08-10;12;15
+7;pinguinon;Hi Tomas! I saw your gaming setup for sale;2025-08-06;16;15
+7;tomas;Hey! Which part interests you - keyboard, mouse, or monitor?;2025-08-06;16;40
+7;pinguinon;The mechanical keyboard caught my eye;2025-08-06;17;25
+7;tomas;It's a Corsair RGB, barely used. $85 sound fair?;2025-08-06;17;50
+7;pinguinon;Would you consider $75? I'm a student;2025-08-06;18;10
+8;pinguinon;Hi camaroncin! I love your vintage leather jacket;2025-08-08;10;15
+8;camaroncin;Thanks! It's genuine leather, from the 80s;2025-08-08;11;20
+8;pinguinon;What size is it? Looks like it's in amazing shape;2025-08-08;12;35
+8;camaroncin;Size medium. I've taken really good care of it;2025-08-08;13;15
+8;pinguinon;How much are you asking for it?;2025-08-08;13;30
+9;pinguinon;Hi Wanmun! Interested in your textbook collection;2025-08-11;14;20
+9;wanmun;Hey! Which subjects are you looking for?;2025-08-11;14;35
+9;wanmun;I have engineering, math, and computer science books;2025-08-11;14;40
+9;pinguinon;Perfect! Looking for programming textbooks mainly;2025-08-11;14;55
+9;wanmun;I have several Java and Python books, all excellent condition;2025-08-11;15;10
+10;pinguinon;Hey Mingdong! Is your electric scooter still for sale?;2025-08-12;15;10
+10;mingdong;Yes! It's a Xiaomi Mi, great for commuting;2025-08-12;15;25
+10;pinguinon;How's the battery life? Any damage?;2025-08-12;15;40
+10;mingdong;Battery lasts 25km, scooter is like new;2025-08-12;15;55
+10;pinguinon;Sounds perfect! Could we meet up to test it?;2025-08-12;16;10
+11;pinguinon;Hi Kaixuan! I saw your standing desk listing;2025-08-13;16;30
+11;kaixuan;Hey! It's height adjustable, electric motor;2025-08-13;16;45
+11;pinguinon;Perfect for working from home! What's the size?;2025-08-13;17;00
+11;kaixuan;120cm x 60cm, fits two monitors easily;2025-08-13;17;15
+11;pinguinon;Sounds ideal! Is $320 negotiable?;2025-08-13;17;30
+12;tomas;Hey Camaroncin! Is your air fryer still available?;2025-08-07;11;30
+12;camaroncin;Hi! Yes, it's a Philips 4.1L, barely used;2025-08-07;12;15
+12;tomas;Awesome! How much are you asking for it?;2025-08-07;13;45
+12;camaroncin;I paid $180 new, would take $90 for it;2025-08-07;14;20
+12;tomas;Would you consider $80? I can pick up today;2025-08-07;14;35
+13;tomas;Hi Wenjian! Interested in your microwave?;2025-08-14;08;20
+13;wenjian;Hey! It's a Samsung 1000W, works perfectly;2025-08-14;08;35
+13;tomas;Great size for my apartment! Any issues with it?;2025-08-14;08;50
+13;wenjian;None at all! Just upgrading to a built-in model;2025-08-14;09;05
+13;tomas;How much are you thinking?;2025-08-14;09;20
+14;tomas;Hey Miguel! Is your bookshelf still for sale?;2025-08-15;10;15
+14;miguel;Yes! It's a 5-shelf IKEA Billy, white color;2025-08-15;10;30
+14;tomas;Perfect for my home office! Any assembly required?;2025-08-15;10;45
+14;miguel;Already assembled, just need to transport it;2025-08-15;11;00
+14;tomas;Excellent! When could I come pick it up?;2025-08-15;11;15
+15;tomas;Hi Henry! Is your guitar still available?;2025-08-16;12;20
+15;henry;Hey! Yes, it's an acoustic Yamaha, great condition;2025-08-16;12;35
+15;henry;Comes with a case and extra strings;2025-08-16;12;40
+15;tomas;Sounds perfect! I'm just learning to play;2025-08-16;12;55
+15;henry;Great! It's perfect for beginners, $140;2025-08-16;13;10
+16;tomas;Hi Charmaine! Love your vintage lamp listing;2025-08-17;13;10
+16;charmaine;Thank you! It's from the 1960s, works perfectly;2025-08-17;13;25
+16;tomas;The brass base is gorgeous! Is it heavy?;2025-08-17;13;40
+16;charmaine;Pretty solid, about 3kg. Very well made;2025-08-17;13;55
+16;tomas;Perfect for my living room! Is $65 firm?;2025-08-17;14;10
+17;camaroncin;Hi Wanmun! Is your Nintendo Switch still available?;2025-08-18;14;30
+17;wanmun;Yes! It comes with 3 games and a carrying case;2025-08-18;14;45
+17;camaroncin;Perfect! Which games are included?;2025-08-18;15;00
+17;wanmun;Mario Kart, Zelda, and Animal Crossing;2025-08-18;15;15
+17;camaroncin;That's exactly what I wanted! How much?;2025-08-18;15;30
+17;wanmun;$280 for everything, all in great condition;2025-08-18;15;45
+18;camaroncin;Hey Lambert! Interested in your blender?;2025-08-19;15;40
+18;lambert;Hi! It's a Vitamix, barely used;2025-08-19;15;55
+18;camaroncin;Awesome! Any reason you're selling?;2025-08-19;16;10
+18;lambert;Just don't use it enough to justify keeping it;2025-08-19;16;25
+18;camaroncin;Fair enough! What's your asking price?;2025-08-19;16;40
+19;camaroncin;Hi JC! Love your vintage record collection listing;2025-08-20;16;45
+19;jc;Thanks! Classic rock and jazz from the 70s-80s;2025-08-20;17;00
+19;jc;All vinyl in excellent condition;2025-08-20;17;05
+19;camaroncin;Do you have any Pink Floyd or Led Zeppelin?;2025-08-20;17;20
+19;jc;Yes! Dark Side of the Moon and Led Zeppelin IV;2025-08-20;17;35
+20;camaroncin;Hi Sherylee! Is your camera bag still for sale?;2025-08-21;17;35
+20;sherylee;Yes! It's a Lowepro, fits DSLR and 3 lenses;2025-08-21;17;50
+20;camaroncin;Perfect size for travel photography!;2025-08-21;18;05
+20;sherylee;Exactly! Really well padded and weather resistant;2025-08-21;18;20
+21;camaroncin;Hey Chengyan! Interested in your desk lamp;2025-08-22;18;40
+21;chengyan;Hi! It's LED with adjustable brightness;2025-08-22;18;55
+21;chengyan;Great for studying or working late;2025-08-22;19;00
+21;camaroncin;Sounds perfect for my home office setup;2025-08-22;19;15
+22;wenjian;Hi Wanmun! Is your yoga mat still available?;2025-08-08;09;30
+22;wanmun;Yes! It's a Lululemon mat, barely used;2025-08-08;10;15
+22;wenjian;Perfect! I've been wanting to start yoga;2025-08-08;11;20
+22;wanmun;It's really thick and grippy, great for beginners;2025-08-08;11;35
+22;wenjian;Sounds ideal! How much are you asking?;2025-08-08;11;50
+23;wenjian;Hey Mingdong! Interested in your road bike?;2025-08-08;13;45
+23;mingdong;Hi! It's a Trek Domane, carbon frame;2025-08-08;14;10
+23;wenjian;Wow! What size and how many miles on it?;2025-08-08;14;30
+23;mingdong;Size 56cm, about 2000 miles, well maintained;2025-08-08;14;45
+23;wenjian;That's perfect for me! Is it still under warranty?;2025-08-08;15;00
+23;mingdong;Yes, warranty runs until next year;2025-08-08;15;15
+24;wenjian;Hi Miguel! Love your coffee machine listing;2025-08-08;16;20
+24;miguel;Thanks! It's an espresso machine with milk frother;2025-08-08;17;05
+24;wenjian;Perfect! Does it make good foam?;2025-08-08;17;20
+24;miguel;Amazing foam! Makes café-quality drinks;2025-08-08;17;35
+25;wenjian;Hey Lambert! Is your monitor still for sale?;2025-08-09;08;15
+25;lambert;Yes! 27-inch 4K Dell, perfect condition;2025-08-09;09;30
+25;wenjian;Great for work from home setup!;2025-08-09;09;45
+25;lambert;Exactly! Really sharp display, no dead pixels;2025-08-09;10;00
+26;wenjian;Hi Kaixuan! Interested in your car speakers?;2025-08-09;11;45
+26;kaixuan;Hey! They're Pioneer 6.5-inch, great sound;2025-08-09;12;20
+26;wenjian;Do they fit most cars?;2025-08-09;12;35
+26;kaixuan;Yes, standard size with all mounting hardware;2025-08-09;12;50
+27;wanmun;Hi Mingdong! Is your skateboard still available?;2025-08-10;13;20
+27;mingdong;Yes! It's a complete setup, barely used;2025-08-10;14;05
+27;wanmun;Perfect for learning! How much?;2025-08-10;14;20
+27;mingdong;$85 for everything, wheels are like new;2025-08-10;14;35
+28;wanmun;Hey Miguel! Interested in your rice cooker;2025-08-10;15;30
+28;miguel;Hi! It's a Zojirushi, makes perfect rice every time;2025-08-10;16;15
+28;wanmun;That's a great brand! What size?;2025-08-10;16;30
+28;miguel;5.5 cups, perfect for small families;2025-08-10;16;45
+28;wanmun;Sounds perfect! Does it have a timer function?;2025-08-10;17;00
+29;wanmun;Hi Chengyan! Love your succulent collection;2025-08-11;12;45
+29;chengyan;Thanks! All healthy plants with cute pots;2025-08-11;13;30
+29;chengyan;Perfect for beginners, very low maintenance;2025-08-11;13;35
+29;wanmun;Great! I need some plants for my apartment;2025-08-11;13;50
+30;wanmun;Hey Charmaine! Is your jewelry box still for sale?;2025-08-11;15;10
+30;charmaine;Yes! It's vintage with multiple compartments;2025-08-11;16;25
+30;wanmun;Perfect! I need better organization;2025-08-11;16;40
+31;wanmun;Hi Henry! Is your chess set still available?;2025-08-11;18;15
+31;henry;Yes! Wooden pieces with a nice board;2025-08-11;18;30
+31;wanmun;Perfect for game nights with friends;2025-08-11;18;45
+31;henry;Exactly! All pieces included, $35;2025-08-11;19;00
+32;mingdong;Hey Miguel! Love your toolbox listing;2025-08-12;08;30
+32;miguel;Thanks! It's a Craftsman with basic tools included;2025-08-12;09;15
+32;mingdong;Perfect for home repairs! How much?;2025-08-12;09;30
+32;miguel;$75 for everything, tools are in great shape;2025-08-12;09;45
+32;mingdong;Deal! When can I pick it up?;2025-08-12;10;00
+33;mingdong;Hi Lambert! Is your backpack still for sale?;2025-08-12;11;20
+33;lambert;Yes! It's a North Face hiking backpack;2025-08-12;12;05
+33;mingdong;Perfect for weekend trips! What size?;2025-08-12;12;20
+33;lambert;40L capacity, great for 2-3 day hikes;2025-08-12;12;35
+33;mingdong;That's exactly what I need! Price?;2025-08-12;12;50
+34;mingdong;Hey Henry! Interested in your fishing gear;2025-08-12;14;30
+34;henry;Hi! Rod, reel, and tackle box included;2025-08-12;15;15
+34;mingdong;Awesome! What type of fishing is it good for?;2025-08-12;15;30
+34;henry;Great for lake fishing, medium action rod;2025-08-12;15;45
+35;mingdong;Hi Clarence! Is your tablet still available?;2025-08-12;16;45
+35;clarence;Yes! iPad Air with keyboard case;2025-08-12;17;30
+35;mingdong;Great for work! What generation?;2025-08-12;17;45
+35;clarence;4th gen, 64GB, excellent condition;2025-08-12;18;00
+36;mingdong;Hey JC! Love your camera lens listing;2025-08-13;10;20
+36;jc;Thanks! 50mm f/1.8, perfect for portraits;2025-08-13;10;35
+36;mingdong;Exactly what I need! Canon mount?;2025-08-13;10;50
+36;jc;Yes! Works with all Canon DSLRs;2025-08-13;11;05
+36;mingdong;Perfect! $120 sound fair?;2025-08-13;11;20
+36;jc;That works for me!;2025-08-13;11;35
+37;miguel;Hi Lambert! Is your printer still for sale?;2025-08-13;15;20
+37;lambert;Yes! HP LaserJet, perfect for home office;2025-08-13;16;10
+37;miguel;Great! Does it include toner cartridges?;2025-08-13;16;25
+37;lambert;Yes, and I have extra toner too;2025-08-13;16;40
+38;miguel;Hey Kaixuan! Interested in your dumbbells;2025-08-13;18;30
+38;kaixuan;Hi! Set of adjustable dumbbells, 5-50 lbs;2025-08-13;19;15
+38;miguel;Perfect for home workouts! Condition?;2025-08-13;19;30
+38;kaixuan;Like new, barely used during lockdown;2025-08-13;19;45
+38;miguel;Great! How much are you asking?;2025-08-13;20;00
+39;miguel;Hi JC! Is your projector still available?;2025-08-14;08;45
+39;jc;Yes! Epson 1080p, great for movie nights;2025-08-14;09;30
+39;jc;Comes with screen and all cables;2025-08-14;09;35
+39;miguel;Amazing setup! How's the image quality?;2025-08-14;09;50
+39;jc;Really crisp, perfect for dark rooms;2025-08-14;10;05
+40;miguel;Hey Henry! Love your watch collection;2025-08-14;11;15
+40;henry;Thanks! Selling a Seiko automatic;2025-08-14;12;40
+40;miguel;Beautiful! Does it keep good time?;2025-08-14;12;55
+40;henry;Perfect timing, serviced last year;2025-08-14;13;10
+41;miguel;Hi Charmaine! Is your jewelry box for sale?;2025-08-14;14;20
+41;charmaine;Yes! Vintage wooden box with compartments;2025-08-14;15;35
+41;miguel;Perfect gift for my girlfriend!;2025-08-14;15;50
+41;charmaine;She'll love it! Multiple drawers and mirror;2025-08-14;16;05
+41;miguel;Sounds perfect! When can I see it?;2025-08-14;16;20
+41;charmaine;This weekend works great!;2025-08-14;16;35
+42;lambert;Hi Kaixuan! Is your winter jacket for sale?;2025-08-15;07;30
+42;kaixuan;Yes! North Face parka, size large;2025-08-15;08;45
+42;lambert;Perfect timing for winter prep!;2025-08-15;09;00
+42;kaixuan;Exactly! Waterproof and really warm;2025-08-15;09;15
+43;lambert;Hey JC! Interested in your drone;2025-08-15;10;20
+43;jc;Hi! DJI Mini 2 with extra batteries;2025-08-15;11;15
+43;lambert;Great for photography! Flight time?;2025-08-15;11;30
+43;jc;31 minutes with all batteries included;2025-08-15;11;45
+43;lambert;Perfect! Any crashes or repairs?;2025-08-15;12;00
+44;lambert;Hi Clarence! Is your mechanical keyboard available?;2025-08-15;13;40
+44;clarence;Yes! Cherry MX switches, RGB lighting;2025-08-15;14;55
+44;lambert;Awesome for coding! What layout?;2025-08-15;15;10
+44;clarence;Full size with numpad, like new;2025-08-15;15;25
+45;lambert;Hey Sherylee! Love your art supplies listing;2025-08-15;18;50
+45;sherylee;Thanks! Professional drawing set with easel;2025-08-15;19;35
+45;lambert;Perfect for my daughter who loves art;2025-08-15;19;50
+45;sherylee;She'll love it! Everything included;2025-08-15;20;05
+45;sherylee;When would you like to pick it up?;2025-08-15;20;06
+46;lambert;Hi Chengyan! Is your coffee grinder for sale?;2025-08-15;16;10
+46;chengyan;Yes! Burr grinder, makes perfect coffee;2025-08-15;17;25
+46;lambert;Great! Electric or manual?;2025-08-15;17;40
+46;chengyan;Electric with multiple grind settings;2025-08-15;17;55
+46;lambert;Sounds perfect! Price negotiable?;2025-08-15;18;10
+47;kaixuan;Hi JC! Is your yoga mat still available?;2025-08-16;11;30
+47;jc;Yes! Manduka Pro, barely used;2025-08-16;12;45
+47;kaixuan;Perfect! Great brand for hot yoga;2025-08-16;13;00
+48;kaixuan;Hey Henry! Interested in your headphones;2025-08-16;14;15
+48;henry;Hi! Sony WH-1000XM4, noise canceling;2025-08-16;15;20
+48;kaixuan;Awesome! How's the battery life?;2025-08-16;15;35
+48;henry;30 hours, comes with case;2025-08-16;15;50
+48;kaixuan;That's exactly what I need!;2025-08-16;16;05
+49;kaixuan;Hi Clarence! Love your smart watch listing;2025-08-16;17;35
+49;clarence;Thanks! Apple Watch Series 7, GPS model;2025-08-16;18;50
+49;kaixuan;Perfect! Does it include charger?;2025-08-16;19;05
+50;kaixuan;Hey Charmaine! Is your plant collection for sale?;2025-08-16;20;10
+50;charmaine;Yes! 5 houseplants with decorative pots;2025-08-16;21;25
+50;kaixuan;Beautiful! Are they low maintenance?;2025-08-16;21;40
+50;charmaine;Super easy! Snake plants and pothos;2025-08-16;21;55
+50;kaixuan;Perfect for my apartment!;2025-08-16;22;10
+51;kaixuan;Hi Sherylee! Is your exercise bike available?;2025-08-17;08;40
+51;sherylee;Yes! Peloton-style bike with screen;2025-08-17;09;55
+51;kaixuan;Great for home workouts! Condition?;2025-08-17;10;10
+51;sherylee;Like new, barely used;2025-08-17;10;25
+52;jc;Hey Henry! Interested in your camping gear;2025-08-17;17;50
+52;henry;Hi! 2-person tent with sleeping bags;2025-08-17;18;15
+52;jc;Perfect! Planning a hiking trip;2025-08-17;18;30
+53;jc;Hi Charmaine! Love your cookbook collection;2025-08-18;11;45
+53;charmaine;Thanks! 15 cookbooks, variety of cuisines;2025-08-18;12;20
+53;jc;Perfect! Any vegetarian options?;2025-08-18;12;35
+53;charmaine;Yes! Several vegan and vegetarian books;2025-08-18;12;50
+53;jc;Exactly what I was looking for!;2025-08-18;13;05
+54;jc;Hey Sherylee! Is your sewing machine for sale?;2025-08-18;14;10
+54;sherylee;Yes! Brother computerized model;2025-08-18;14;25
+54;jc;Great for alterations! Easy to use?;2025-08-18;14;40
+55;jc;Hi Chengyan! Interested in your rice cooker;2025-08-18;08;15
+55;chengyan;Hi! Zojirushi fuzzy logic, makes perfect rice;2025-08-18;09;30
+55;chengyan;10-cup capacity, great for meal prep;2025-08-18;09;35
+55;jc;That's the perfect size for me!;2025-08-18;09;50
+56;jc;Hey Clarence! Is your router still available?;2025-08-17;20;30
+56;clarence;Yes! WiFi 6 router, excellent range;2025-08-17;21;45
+56;jc;Perfect for my home office setup!;2025-08-17;22;00
+57;henry;Hi Sherylee! Love your purse collection;2025-08-19;17;10
+57;sherylee;Thanks! Designer bags, gently used;2025-08-19;18;25
+57;henry;Perfect gift for my wife! Brands?;2025-08-19;18;40
+57;sherylee;Coach, Kate Spade, and Michael Kors;2025-08-19;18;55
+58;henry;Hey Charmaine! Is your mirror still for sale?;2025-08-19;14;30
+58;charmaine;Yes! Vintage full-length mirror;2025-08-19;15;45
+58;henry;Perfect for the bedroom! Condition?;2025-08-19;16;00
+59;henry;Hi Chengyan! Interested in your blender;2025-08-19;11;50
+59;chengyan;Hi! Ninja professional, great for smoothies;2025-08-19;12;15
+59;henry;Perfect! Does it crush ice well?;2025-08-19;12;30
+59;chengyan;Crushes ice perfectly, very powerful;2025-08-19;12;45
+60;henry;Hey Clarence! Is your monitor for sale?;2025-08-19;08;20
+60;clarence;Yes! 32-inch curved gaming monitor;2025-08-19;09;35
+60;henry;Great for work from home! Resolution?;2025-08-19;09;50
+61;chengyan;Hi Charmaine! Love your throw pillow collection;2025-08-22;08;15
+61;charmaine;Thanks! Set of 4 decorative pillows;2025-08-22;09;30
+61;charmaine;Perfect for refreshing your living room;2025-08-22;09;45
+62;chengyan;Hey Sherylee! Is your instant pot available?;2025-08-22;11;45
+62;sherylee;Yes! 8-quart, perfect for meal prep;2025-08-22;12;20
+62;chengyan;Great size for batch cooking!;2025-08-22;12;35
+62;chengyan;Will you take RM50 for it?;2025-08-22;12;36
+63;chengyan;Hi Clarence! Interested in your desk lamp;2025-08-22;14;35
+63;clarence;Hi! LED with adjustable brightness;2025-08-22;15;50
+63;clarence;Perfect for late night work or reading;2025-08-22;15;55
+64;clarence;Hey Charmaine! Is your candle collection for sale?;2025-08-20;17;30
+64;charmaine;Yes! Various scented candles, barely used;2025-08-20;18;45
+64;clarence;Perfect for creating ambiance!;2025-08-20;19;00
+65;clarence;Hi Sherylee! Love your kitchen appliance bundle;2025-08-20;20;10
+65;sherylee;Thanks! Toaster, coffee maker, and blender;2025-08-20;21;25
+65;clarence;Perfect starter set! All working?;2025-08-20;21;40
+65;sherylee;Everything works perfectly!;2025-08-20;21;55

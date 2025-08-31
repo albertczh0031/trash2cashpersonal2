@@ -10,4 +10,7 @@ urlpatterns = [
     path('my-chatrooms/', UserChatRoomsView.as_view(), name='my-chatrooms'),
     path('typing/', views.set_typing_status, name='set_typing_status'),
     path('typing/<int:chatroom_id>/', views.get_typing_status, name='get_typing_status'),
+    path('unread-count/', views.get_unread_count, name='unread_count'),
+    path('chatroom-unread-counts/', views.get_chatroom_unread_counts, name='chatroom_unread_counts'),
+    path('mark-as-read/', views.mark_messages_as_read, name='mark_messages_as_read'),
 ]

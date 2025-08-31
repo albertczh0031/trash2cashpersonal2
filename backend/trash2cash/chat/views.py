@@ -123,3 +123,62 @@ def get_typing_status(request, chatroom_id):
         return Response({'error': 'Chatroom not found'}, status=404)
     
     return Response({'typing_users': typing_users})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_unread_count(request):
+    """Get the count of unread messages for the authenticated user"""
+    count = Message.objects.filter(
+        chatroom__participants=request.user,
+        is_read=False
+    ).exclude(sender=request.user).count()
+    print("Unread messages count:", count)
+    return Response({'unread_count': count})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_chatroom_unread_counts(request):
+    """Get the count of unread messages per chatroom for the authenticated user"""
+    # Get all chatrooms the user participates in
+    chatrooms = ChatRoom.objects.filter(participants=request.user)
+    
+    unread_counts = {}
+    for chatroom in chatrooms:
+        # Count unread messages in this chatroom (excluding user's own messages)
+        count = Message.objects.filter(
+            chatroom=chatroom,
+            is_read=False
+        ).exclude(sender=request.user).count()
+        
+        unread_counts[chatroom.id] = count
+    
+    return Response({'unread_counts': unread_counts})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def mark_messages_as_read(request):
+    """Mark all unread messages in a chatroom as read for the authenticated user"""
+    chatroom_id = request.data.get('chatroom_id')
+    
+    if not chatroom_id:
+        return Response({'error': 'chatroom_id is required'}, status=400)
+    
+    try:
+        chatroom = ChatRoom.objects.get(id=chatroom_id)
+    except ChatRoom.DoesNotExist:
+        return Response({'error': 'Chatroom not found'}, status=404)
+    
+    # Check if user is a participant in this chatroom
+    if not chatroom.participants.filter(id=request.user.id).exists():
+        return Response({'error': 'Access denied'}, status=403)
+    
+    # Mark all unread messages in this chatroom as read (excluding user's own messages)
+    updated_count = Message.objects.filter(
+        chatroom=chatroom,
+        is_read=False
+    ).exclude(sender=request.user).update(is_read=True)
+    
+    return Response({
+        'message': f'Marked {updated_count} messages as read',
+        'updated_count': updated_count
+    })

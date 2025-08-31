@@ -16,7 +16,7 @@ export default function RecyclingCentreDetailPage() {
 
   useEffect(() => {
     // Fetch from backend data
-    fetch(`https://trash2cashpersonal.onrender.com/api/recycler/${id}/`)
+    fetch(`http://127.0.0.1:8000/api/recycler/${id}/`)
       .then((res) => {
         if (!res.ok) throw new Error("Unable to get Recycler Data");
         return res.json();
@@ -52,7 +52,7 @@ export default function RecyclingCentreDetailPage() {
     );
 
   return (
-    <main className="flex flex-col mx-5 space-y-4">
+    <main className="flex flex-col mx-5 space-y-4 bg-gradient-to-br from-green-50 to-green-100 min-h-screen p-6 rounded-xl">
       <div className="mb-2 flex items-center justify-between">
         <h1 className="pl-2 pb-2 text-2xl">{recycler.name}</h1>
 

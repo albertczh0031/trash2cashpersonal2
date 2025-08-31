@@ -30,6 +30,7 @@ class VoucherInstance(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
     redeemed = models.BooleanField(default=False) # If False that means Earned, If True means redeemed
+    reminder_sent = models.BooleanField(default=False)  # To track if a reminder has been sent for this voucher
     def __str__(self):
         return f"{self.voucher.name} - {self.user} - {self.date} - {self.voucher.points} pts - {'Redeemed' if self.redeemed else 'Earned'}"
     

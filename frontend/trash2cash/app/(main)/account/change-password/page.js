@@ -12,7 +12,6 @@ export default function ChangePasswordPage() {
   const [success, setSuccess] = useState("");
   const [username, setUsername] = useState("");
 
-  // Show/hide states for each password field
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -48,7 +47,7 @@ export default function ChangePasswordPage() {
 
     if (!validatePassword(newPassword)) {
       setError(
-        "Password must be at least 8 characters long and include a number and a symbol.",
+        "Password must be at least 8 characters long and include a number and a symbol."
       );
       return;
     }
@@ -56,7 +55,7 @@ export default function ChangePasswordPage() {
     const token = localStorage.getItem("access");
 
     try {
-      const res = await fetch("https://trash2cashpersonal.onrender.com/api/change-password/", {
+      const res = await fetch("http://localhost:8000/api/change-password/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,9 +84,7 @@ export default function ChangePasswordPage() {
       setNewPassword("");
       setConfirmPassword("");
 
-      await fetch("/api/session", {
-        method: "DELETE",
-      });
+      await fetch("/api/session", { method: "DELETE" });
 
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
@@ -100,70 +97,83 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 shadow-md border rounded space-y-6">
-      <h1 className="text-xl font-bold">Change Password</h1>
-
-      <form onSubmit={handleChangePassword} className="space-y-4">
-        <div className="relative">
-          <input
-            type={showCurrent ? "text" : "password"}
-            placeholder="Current Password"
-            className="w-full p-2 border rounded pr-10"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => setShowCurrent((v) => !v)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600"
-            tabIndex={-1}
-          >
-            {showCurrent ? "Hide" : "Show"}
-          </button>
-        </div>
-        <div className="relative">
-          <input
-            type={showNew ? "text" : "password"}
-            placeholder="New Password"
-            className="w-full p-2 border rounded pr-10"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => setShowNew((v) => !v)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600"
-            tabIndex={-1}
-          >
-            {showNew ? "Hide" : "Show"}
-          </button>
-        </div>
-        <div className="relative">
-          <input
-            type={showConfirm ? "text" : "password"}
-            placeholder="Confirm New Password"
-            className="w-full p-2 border rounded pr-10"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirm((v) => !v)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600"
-            tabIndex={-1}
-          >
-            {showConfirm ? "Hide" : "Show"}
-          </button>
-        </div>
-        {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-500">{success}</p>}
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded"
-        >
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center">
+      <div className="max-w-md w-full mx-auto p-6 shadow-lg border border-green-200 rounded-xl bg-white/70 backdrop-blur space-y-6">
+        <h1 className="text-2xl font-bold text-green-800 text-center">
           Change Password
-        </button>
-      </form>
+        </h1>
+
+        <form onSubmit={handleChangePassword} className="space-y-4">
+          {/* Current Password */}
+          <div className="relative">
+            <input
+              type={showCurrent ? "text" : "password"}
+              placeholder="Current Password"
+              className="w-full p-3 border border-green-300 rounded-lg pr-16 focus:ring-2 focus:ring-green-400 focus:outline-none"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowCurrent((v) => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-green-700 hover:text-green-900"
+              tabIndex={-1}
+            >
+              {showCurrent ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          {/* New Password */}
+          <div className="relative">
+            <input
+              type={showNew ? "text" : "password"}
+              placeholder="New Password"
+              className="w-full p-3 border border-green-300 rounded-lg pr-16 focus:ring-2 focus:ring-green-400 focus:outline-none"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowNew((v) => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-green-700 hover:text-green-900"
+              tabIndex={-1}
+            >
+              {showNew ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative">
+            <input
+              type={showConfirm ? "text" : "password"}
+              placeholder="Confirm New Password"
+              className="w-full p-3 border border-green-300 rounded-lg pr-16 focus:ring-2 focus:ring-green-400 focus:outline-none"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm((v) => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-green-700 hover:text-green-900"
+              tabIndex={-1}
+            >
+              {showConfirm ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          {/* Messages */}
+          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {success && <p className="text-green-700 text-sm">{success}</p>}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-medium shadow-md transition"
+          >
+            Change Password
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

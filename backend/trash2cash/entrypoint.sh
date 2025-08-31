@@ -1,8 +1,4 @@
 #!/bin/bash
-
-# Debugging: Confirm the script is running
-echo "entrypoint.sh executed"
-
 # Remove the existing SQLite database file
 if [ -f "db.sqlite3" ]; then
     echo "Deleting existing db.sqlite3 file..."
@@ -10,7 +6,7 @@ if [ -f "db.sqlite3" ]; then
 fi
 # Run migrations
 echo "Running migrations..."
-python manage.py makemigrations analytics chat community logistics marketplace recycler rewards upload users
+python manage.py makemigrations
 python manage.py migrate
 
 # Populate data
@@ -34,6 +30,9 @@ python manage.py populate_appointments
 
 echo "Populating chatrooms..."
 python manage.py populate_chatrooms
+
+echo "Populating market..."
+python manage.py populate_marketplace
 
 # Create a generic superuser for testing
 echo "Creating a generic superuser..."

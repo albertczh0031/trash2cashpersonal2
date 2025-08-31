@@ -2,7 +2,7 @@ import logging
 from zoneinfo import ZoneInfo
 
 from django_celery_beat.utils import now
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from pytz import timezone
 from timezone_field.backends import pytz
@@ -10,7 +10,7 @@ from timezone_field.backends import pytz
 from trash2cash import settings
 from users.models import Appointment, User, Profile
 from recycler.models import RecyclingCentre
-from recycler.email_sending import send_appointment_email
+from recycler.email_sending import send_appointment_email, send_drop_off_email
 from datetime import timedelta, datetime
 from django.utils.timezone import make_aware, now, localtime, get_current_timezone
 from recycler.scheduler import send_appointment_reminder_email
@@ -167,6 +167,49 @@ def increment_user_points(user: User):
     profile.points += points_earned
     profile.save()
     logger.info(f"User {user} points incremented by {points_earned}. New points total: {profile.points}")
+
+
+@receiver(pre_save, sender=Appointment)
+def check_pickup_arrival_time(sender, instance, **kwargs):
+    """
+    Check if the pickup appointment has arrived at the recycling centre by checking if the arrival time is set.
+    """
+    if instance.pk is None:
+        # This is a new appointment, no need to check arrival time
+        return
+    try:
+        existing_appointment = Appointment.objects.get(pk=instance.pk)
+    except Appointment.DoesNotExist:
+        return
+
+    if existing_appointment.arrival_time is None and instance.arrival_time is not None:
+        # If the existing appointment has no arrival time and the new instance has an arrival time, the picked-up item
+        # has arrived at the recycling centre.
+        if instance.is_dropoff:
+            raise ValueError("Drop-off appointments should not have an arrival time. "
+                             "Only pickup appointments should have a driver arrival time at the centre.")
+
+        if instance.status != 'Completed':
+            # If the appointment is not completed, set the status to 'Completed'
+            instance.status = 'Completed'
+            logger.debug(f"Appointment {instance.pk} status set to Completed due to arrival time being set.")
+
+        # Get the appointment details
+        drop_off_time = instance.arrival_time
+        appointment_user = instance.user_id # this is actually the user, not the user_id
+        user_email = appointment_user.email
+        appointment_centre = instance.centre
+        logger.debug(f"Appointment for user {appointment_user} at centre {appointment_centre} has arrived at {drop_off_time}")
+        logger.debug(f"User email: {user_email}")
+
+        # Send email to the user
+        send_drop_off_email(user_email, appointment_user, appointment_centre, drop_off_time)
+
+
+
+
+
+
 
 
 

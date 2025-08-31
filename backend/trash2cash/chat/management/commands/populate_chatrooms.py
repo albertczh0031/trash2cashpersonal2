@@ -172,6 +172,7 @@ class Command(BaseCommand):
                         chatroom=chatroom,
                         sender=sender,
                         content=message_content.strip(),
+                        is_read=True,  # Mark all populated messages as read
                     )
                     
                     # Update the timestamp after creation to override auto_now_add

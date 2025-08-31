@@ -1,6 +1,7 @@
 import os
 import smtplib
 import ssl
+from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import logging
@@ -84,5 +85,65 @@ def send_appointment_email(
     except Exception as e:
         logger.error(f"Error sending email to {to_email}: {e}")
         return {"success": False, "error": str(e)}
+
+
+def send_drop_off_email(to_email, user, centre, drop_off_time):
+    """
+    Sends a drop-off email to the user.
+    """
+    name = f"{user.first_name} {user.last_name}"
+    # get the date today
+    today = datetime.now().date()
+
+    # Fallback to environment variables
+    smtp_username = os.environ.get("EMAIL_HOST_USER")
+    smtp_password = os.environ.get("EMAIL_HOST_PASSWORD")
+
+    # Validate the SMTP credentials
+    if not smtp_username or not smtp_password:
+        raise ValueError("SMTP username and password are required")
+
+    # Build the HTML content for the email
+    html_content = f"""
+    <html>
+        <body>
+            <h2>Trash2Cash Drop-off Appointment Confirmation</h2>
+            <p>Dear {name},</p>
+            <p>Your item has been successfully dropped off at {centre.name}.</p>
+            
+            <p><strong>Time:</strong> {drop_off_time}</p>
+            <p><strong>Date:</strong> {today}</p>
+            <p><strong>Address:</strong> {centre.address}</p>
+            <p>Thank you for using Trash2Cash!</p>
+        </body>
+    </html>
+    """
+
+    # Prepare the email content
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = to_email
+    msg['Subject'] = "Trash2Cash Drop-off Appointment Confirmation"
+
+    # Attach HTML content
+    msg.attach(MIMEText(html_content, 'html'))
+
+    # Setup secure SSL context
+    context = ssl.create_default_context()
+
+    try:
+        # Connect to the Gmail SMTP server and send the email
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+            server.login(smtp_username, smtp_password)
+            server.sendmail(smtp_username, to_email, msg.as_string())
+
+        logger.info(f"Email successfully sent to {to_email}")
+        return {"success": True, "message": "Email sent successfully"}
+
+    except Exception as e:
+        logger.error(f"Error sending email to {to_email}: {e}")
+        return {"success": False, "error": str(e)}
+
+
 
 

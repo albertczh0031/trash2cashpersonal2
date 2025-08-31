@@ -1,15 +1,66 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import RecyclingCentreListItem from "./recycling-centre-list-item";
 
 export default function RecyclingCentreList() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const option = searchParams.get("option");
+  const ott = searchParams.get("ott");
   const [centres, setCentres] = useState(null);
   const [lat, setLat] = useState(null); // State for latitude
   const [lon, setLon] = useState(null); // State for longitude
+
+  // Validate OTT
+  useEffect(() => {
+    if (!ott) {
+      router.replace("/upload"); // redirect if no token
+      return;
+    }
+
+    fetch(`http://127.0.0.1:8000/api/validate-ott/?ott=${ott}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.valid) {
+          router.replace("/upload"); // invalid token -> redirect
+        }
+      })
+      .catch(() => router.replace("/upload")); // network error -> redirect
+  }, [ott, router]);
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const confirmLeave = window.confirm(
+        "You have already submitted the form. Going back may cause data loss. Do you still want to leave?"
+      );
+      if (!confirmLeave) {
+        window.history.pushState(null, "", window.location.href);
+      }
+    };
+
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue =
+        "You have already submitted the form. Are you sure you want to leave?";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   useEffect(() => {
     if (!category) return;
@@ -39,7 +90,7 @@ export default function RecyclingCentreList() {
     if (!lat || !lon || !category) return;
 
     fetch(
-      `https://trash2cashpersonal.onrender.com/api/locate_centres/?latitude=${lat}&longitude=${lon}&category=${category}`,
+      `http://127.0.0.1:8000/api/locate_centres/?latitude=${lat}&longitude=${lon}&category=${category}`,
     )
       .then((res) => res.json())
       .then((data) => {

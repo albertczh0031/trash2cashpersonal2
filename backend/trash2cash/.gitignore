@@ -18,3 +18,8 @@ gcp_key.json
 
 # macOS system files
 .DS_Store
+
+# Ignore all PNG and JPG files in media folder
+media/**/*.png
+media/**/*.jpg
+/.env.local

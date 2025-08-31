@@ -3,17 +3,71 @@
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useSearchParams } from "next/navigation"; // For getting query parameters
+import { useRouter, useSearchParams } from "next/navigation"; // For getting query parameters
+import AppointmentConfirmationDialog from "@/components/upload/AppointmentConfirmationDialog";
 
 import Header from "@/components/ui/header";
 import { Button } from "@/components/ui/button";
 
 const AppointmentPage = () => {
   const searchParams = useSearchParams(); // Initialize search params
+  const router = useRouter();
+  const ott = searchParams.get("ott");
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date()); // Today's date as default
   const [booking, setBooking] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmedAppointment, setConfirmedAppointment] = useState(null);
+
+  // Validate OTT
+  useEffect(() => {
+    if (!ott) {
+      router.replace("/upload"); // redirect if no token
+      return;
+    }
+
+    fetch(`http://127.0.0.1:8000/api/validate-ott/?ott=${ott}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.valid) {
+          router.replace("/upload"); // invalid token -> redirect
+        }
+      })
+      .catch(() => router.replace("/upload")); // network error -> redirect
+  }, [ott, router]);
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const confirmLeave = window.confirm(
+        "You have already submitted the form. Going back may cause data loss. Do you still want to leave?"
+      );
+      if (!confirmLeave) {
+        window.history.pushState(null, "", window.location.href);
+      }
+    };
+
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue =
+        "You have already submitted the form. Are you sure you want to leave?";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   useEffect(() => {
     const formattedDate = selectedDate.toISOString().split("T")[0]; // Re-formats the date as YYYY-MM-DD
@@ -21,7 +75,7 @@ const AppointmentPage = () => {
     const isDropoff = searchParams.get("is_dropoff"); // Get the is_dropoff parameter from the URL
 
     fetch(
-      `https://trash2cashpersonal.onrender.com/api/appointments/${centreId}/${formattedDate}/?is_dropoff=${isDropoff}`,
+      `http://127.0.0.1:8000/api/appointments/${centreId}/${formattedDate}/?is_dropoff=${isDropoff}`,
     )
       .then((response) => {
         if (!response.ok) {
@@ -43,7 +97,7 @@ const AppointmentPage = () => {
   // To get a new access token when it expiress
   const refreshAccessToken = async (refreshToken) => {
     try {
-      const response = await fetch("https://trash2cashpersonal.onrender.com/api/token/refresh/", {
+      const response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +130,7 @@ const AppointmentPage = () => {
 
     try {
       let response = await fetch(
-        "https://trash2cashpersonal.onrender.com/api/appointments/confirm/",
+        "http://127.0.0.1:8000/api/appointments/confirm/",
         {
           method: "POST",
           headers: {
@@ -93,7 +147,7 @@ const AppointmentPage = () => {
         if (newAccessToken) {
           // Retry the request with the new token
           response = await fetch(
-            "https://trash2cashpersonal.onrender.com/api/appointments/confirm/",
+            "http://127.0.0.1:8000/api/appointments/confirm/",
             {
               method: "POST",
               headers: {
@@ -113,8 +167,15 @@ const AppointmentPage = () => {
       }
 
       const data = await response.json();
-      alert("Appointment booked successfully!");
-      // Optionally, remove the booked appointment from the list
+      // alert("Appointment booked successfully!");
+      // Find the appointment details from the list
+      const booked = appointments.find((a) => a.appointment_id === appointmentId);
+      setConfirmedAppointment({
+        ...booked,
+        date: selectedDate.toISOString().split("T")[0],
+      });
+      setShowConfirmation(true);
+
       setAppointments((prev) =>
         prev.filter(
           (appointment) => appointment.appointment_id !== appointmentId,
@@ -122,7 +183,7 @@ const AppointmentPage = () => {
       );
     } catch (error) {
       console.error("Error booking appointment:", error);
-      alert("Failed to book appointment.");
+      // alert("Failed to book appointment.");
     } finally {
       setBooking(false); // Reset booking state
     }
@@ -190,6 +251,15 @@ const AppointmentPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      {showConfirmation && confirmedAppointment && (
+        <AppointmentConfirmationDialog
+          open={showConfirmation}
+          onClose={() => setShowConfirmation(false)}
+          appointmentDetails={confirmedAppointment}
+        />
+      )}
     </div>
   );
 };

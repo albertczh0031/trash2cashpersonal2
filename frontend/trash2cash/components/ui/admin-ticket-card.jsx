@@ -12,10 +12,11 @@ export default function AdminTicketCard({
   date,
   points_earned,
   item_img,
+  status,
 }) {
   const handleSendEmail = async () => {
     try {
-      const response = await sendAppointmentEmail({
+      await sendAppointmentEmail({
         name: "test",
         email: "test@example.com",
         date: date.split(" ")[0],
@@ -34,28 +35,37 @@ export default function AdminTicketCard({
   };
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-6 items-start bg-gradient-to-r from-green-50 to-green-100 
+                    border border-green-200 p-5 rounded-2xl shadow-md hover:shadow-lg transition">
+      {/* Ticket Card */}
       <Link href="#">
-        <Card className="w-180">
+        <Card className="bg-gradient-to-b from-green-100 to-green-50 border-none shadow-none">
           <CardHeader>
-            <CardTitle>Ticket #{appointment_id}</CardTitle>
+            <CardTitle className="text-green-900 font-semibold">
+              Ticket #{appointment_id}
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p>Item: {item_desc}</p>
-            <p>Date: {date}</p>
-            <p>Points gained: {points_earned}</p>
+          <CardContent className="text-green-800 space-y-1">
+            <p><span className="font-medium">Item:</span> {item_desc}</p>
+            <p><span className="font-medium">Date:</span> {date}</p>
+            <p><span className="font-medium">Status:</span> {status}</p>
+            <p>
+              <span className="font-medium">Points:</span>{" "}
+              {points_earned !== null ? points_earned : "Not completed yet!"}
+            </p>
           </CardContent>
         </Card>
       </Link>
 
+      {/* Side Column */}
       <div className="flex flex-col items-center justify-between">
         <img
-          src="/icons/no_image.png"
-          className="w-24 h-24 object-contain"
+          src={item_img || "/icons/no_image.png"}
+          className="w-24 h-24 object-contain rounded-lg border border-green-200 bg-white"
           alt="Item"
         />
         <Button
-          className="mt-2 bg-blue-600 text-white"
+          className="mt-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-xl shadow-md"
           onClick={handleSendEmail}
         >
           Send Email

@@ -1,0 +1,6 @@
+# username;title;description;price;sizes;gender;image_filenames (comma-separated)
+mingdong;Classic White Tee;Soft cotton, never worn.;10.00;M;Female;classic_white_tee.jpg,classic_white_tee2.jpg
+chengyan;Denim Jacket;Trendy and warm, fits most.;25.00;L;Male;denim_jacket.jpg,denim_jacket2.jpg
+chengyan;Summer Dress;Floral print, light fabric.;18.00;S;Female;summer_dress.jpg,summer_dress2.jpg
+sherylee;Unisex Hoodie;Comfy and stylish for all.;22.00;XL;Unisex;unisex_hoodie.jpg,unisex_hoodie2.jpg
+sherylee;Sports Shorts;Great for running or gym.;12.00;M;Male;sports_shorts.jpg,sports_shorts2.jpg
