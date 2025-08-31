@@ -140,7 +140,7 @@ export default function MarketplacePage() {
         >
           <h2 className="text-5xl font-extrabold">Get Involved</h2>
           <p className="text-xl text-green-900/80 max-w-3xl mx-auto">
-            Whether you're decluttering or hunting for deals, join a community committed to sustainability and reuse.
+            Whether you&apos;re decluttering or hunting for deals, join a community committed to sustainability and reuse.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full px-4">
@@ -148,7 +148,7 @@ export default function MarketplacePage() {
             <Card className="bg-green-100 hover:scale-[1.03] transition-transform duration-300 shadow-2xl">
               <CardContent className="p-6 space-y-4 text-center">
                 <div className="text-4xl">🛍️</div>
-                <h2 className="text-2xl font-bold">I'm a Buyer</h2>
+                <h2 className="text-2xl font-bold">I&apos;m a Buyer</h2>
                 <p className="text-green-900/80">
                   Discover affordable pre-loved items and shop sustainably within your local community.
                 </p>
@@ -162,7 +162,7 @@ export default function MarketplacePage() {
             <Card className="bg-yellow-100 hover:scale-[1.03] transition-transform duration-300 shadow-2xl">
               <CardContent className="p-6 space-y-4 text-center">
                 <div className="text-4xl">💰</div>
-                <h2 className="text-2xl font-bold">I'm a Seller</h2>
+                <h2 className="text-2xl font-bold">I&apos;m a Seller</h2>
                 <p className="text-green-900/80">
                   Declutter your space and earn money by selling your pre-loved items safely and easily.
                 </p>
