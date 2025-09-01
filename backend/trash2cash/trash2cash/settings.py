@@ -117,6 +117,8 @@ TEMPLATES = [
     },
 ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 WSGI_APPLICATION = 'trash2cash.wsgi.application'
 
 
@@ -140,22 +142,6 @@ DATABASES = {
     }
 }
 
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "OPTIONS": {
-            "bucket_name": "marketvoucherpfp",
-            "access_key": os.getenv("SUPABASE_ACCESS_KEY_ID"),
-            "secret_key": os.getenv("SUPABASE_SECRET_ACCESS_KEY"),
-            "endpoint_url": "https://ghvkehbrdafanbgosgox.storage.supabase.co/storage/v1/s3",
-            "region_name": "ap-southeast-1",
-            "default_acl": "public-read",
-        },
-    },
-    "staticfiles": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
