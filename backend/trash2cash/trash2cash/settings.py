@@ -152,6 +152,9 @@ STORAGES = {
             "default_acl": "public-read",
         },
     },
+    "staticfiles": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
 }
 
 # Password validation
