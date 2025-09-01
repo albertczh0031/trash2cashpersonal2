@@ -117,8 +117,6 @@ TEMPLATES = [
     },
 ]
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 WSGI_APPLICATION = 'trash2cash.wsgi.application'
 
 
@@ -149,8 +147,8 @@ AWS_ACCESS_KEY_ID = os.getenv("SUPABASE_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("SUPABASE_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = "marketvoucherpfp"
 AWS_S3_ENDPOINT_URL = "https://ghvkehbrdafanbgosgox.storage.supabase.co/storage/v1/s3"
-AWS_S3_REGION_NAME = "ap-southeast-1"  # or whatever Supabase provides
-AWS_DEFAULT_ACL = "public-read"   # makes files accessible via URL
+AWS_S3_REGION_NAME = "ap-southeast-1"
+AWS_DEFAULT_ACL = "public-read"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
