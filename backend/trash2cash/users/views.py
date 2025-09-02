@@ -104,6 +104,7 @@ class AvailableAppointmentsView(APIView):
         return Response(serializer.data)
 
 # US 37: Confirm Appointment View: Allows a user to confirm an appointment
+@permission_classes([IsAuthenticated])
 class ConfirmAppointmentView(APIView):
     permission_classes = [IsAuthenticated]
 
