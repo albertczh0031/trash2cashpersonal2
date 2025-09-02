@@ -135,76 +135,79 @@ const AppointmentPage = () => {
   };
 
   const bookAppointment = async (appointmentId) => {
-    const userToken = localStorage.getItem("access"); // Retrieve the access token from local storage
-    const refreshToken = localStorage.getItem("refresh"); // Retrieve the refresh token from local storage
+  const userToken = localStorage.getItem("access"); // Retrieve the access token from local storage
+  const refreshToken = localStorage.getItem("refresh"); // Retrieve the refresh token from local storage
 
-    if (!userToken || !refreshToken) {
-      alert("You need to log in to book an appointment.");
-      return;
-    }
+  if (!userToken || !refreshToken) {
+    alert("You need to log in to book an appointment.");
+    return;
+  }
 
-    setBooking(true); // Set booking state to true while processing
+  setBooking(true); // Set booking state to true while processing
 
-    try {
-      let response = await fetch(
-        "https://trash2cashpersonal.onrender.com/api/appointments/confirm/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken}`,
-          },
-          body: JSON.stringify({ appointment_id: appointmentId }),
+  try {
+    let response = await fetch(
+      "https://trash2cashpersonal.onrender.com/api/appointments/confirm/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
         },
-      );
+        body: JSON.stringify({ appointment_id: appointmentId }),
+        credentials: "include", // 👈 ensure CORS preflight + cookies handled properly
+      },
+    );
 
-      if (response.status === 401) {
-        // Token might be expired, try refreshing it
-        const newAccessToken = await refreshAccessToken(refreshToken);
-        if (newAccessToken) {
-          // Retry the request with the new token
-          response = await fetch(
-            "https://trash2cashpersonal.onrender.com/api/appointments/confirm/",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${newAccessToken}`,
-              },
-              body: JSON.stringify({ appointment_id: appointmentId }),
+    if (response.status === 401) {
+      // Token might be expired, try refreshing it
+      const newAccessToken = await refreshAccessToken(refreshToken);
+      if (newAccessToken) {
+        // Retry the request with the new token
+        response = await fetch(
+          "https://trash2cashpersonal.onrender.com/api/appointments/confirm/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${newAccessToken}`,
             },
-          );
-        } else {
-          throw new Error("Failed to refresh token");
-        }
+            body: JSON.stringify({ appointment_id: appointmentId }),
+            credentials: "include", // 👈 same fix here too
+          },
+        );
+      } else {
+        throw new Error("Failed to refresh token");
       }
-
-      if (!response.ok) {
-        throw new Error("Failed to book appointment");
-      }
-
-      const data = await response.json();
-      // alert("Appointment booked successfully!");
-      // Find the appointment details from the list
-      const booked = appointments.find((a) => a.appointment_id === appointmentId);
-      setConfirmedAppointment({
-        ...booked,
-        date: formatDateLocal(selectedDate),
-      });
-      setShowConfirmation(true);
-
-      setAppointments((prev) =>
-        prev.filter(
-          (appointment) => appointment.appointment_id !== appointmentId,
-        ),
-      );
-    } catch (error) {
-      console.error("Error booking appointment:", error);
-      // alert("Failed to book appointment.");
-    } finally {
-      setBooking(false); // Reset booking state
     }
-  };
+
+    if (!response.ok) {
+      throw new Error("Failed to book appointment");
+    }
+
+    const data = await response.json();
+
+    // Find the appointment details from the list
+    const booked = appointments.find((a) => a.appointment_id === appointmentId);
+
+    setConfirmedAppointment({
+      ...booked,
+      date: formatDateLocal(selectedDate),
+    });
+    setShowConfirmation(true);
+
+    // Remove booked appointment from the list
+    setAppointments((prev) =>
+      prev.filter((appointment) => appointment.appointment_id !== appointmentId),
+    );
+  } catch (error) {
+    console.error("Error booking appointment:", error);
+    // alert("Failed to book appointment.");
+  } finally {
+    setBooking(false); // Reset booking state
+  }
+};
+
 
   return (
     <div className="w-full bg-white z-10">
