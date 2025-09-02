@@ -115,60 +115,66 @@ class ConfirmAppointmentView(APIView):
 
         try:
             appointment = Appointment.objects.get(
-                appointment_id=appointment_id, user_id__isnull=True, status='Available'
+                appointment_id=appointment_id,
+                user_id__isnull=True,
+                status='Available'
             )
+
+            # Mark as booked
             appointment.user_id = request.user
             appointment.status = 'Booked'
             appointment.save()
-            # Create a user notification for successful booking
+
+            # Try to create notification (don’t block if fails)
             try:
-                # Build datetime in format: "4 Sept 2025 at 16:00"
-                date_part = None
-                time_part = None
-                try:
-                    d = appointment.date
-                    if isinstance(d, str):
-                        from datetime import datetime as _dt
-                        d = _dt.strptime(d, "%Y-%m-%d").date()
-                    date_part = f"{d.day} {d.strftime('%b')} {d.year}"
-                except Exception:
-                    date_part = str(appointment.date)
+                from datetime import datetime as _dt
 
-                try:
-                    t = appointment.time
-                    if t is None:
-                        time_part = "00:00"
-                    elif isinstance(t, str):
-                        from datetime import datetime as _dt
-                        parsed = None
-                        for fmt in ["%H:%M:%S", "%H:%M"]:
-                            try:
-                                parsed = _dt.strptime(t, fmt).time()
-                                break
-                            except Exception:
-                                continue
-                        if parsed:
-                            time_part = parsed.strftime("%H:%M")
-                        else:
-                            time_part = t
-                    else:
-                        time_part = t.strftime("%H:%M")
-                except Exception:
-                    time_part = str(appointment.time)
+                # Format date
+                d = appointment.date
+                if isinstance(d, str):
+                    d = _dt.strptime(d, "%Y-%m-%d").date()
+                date_part = f"{d.day} {d.strftime('%b')} {d.year}"
 
-                when = f"{date_part} at {time_part}" if date_part and time_part else f"{appointment.date} {appointment.time}"
+                # Format time
+                t = appointment.time
+                if isinstance(t, str):
+                    parsed = None
+                    for fmt in ["%H:%M:%S", "%H:%M"]:
+                        try:
+                            parsed = _dt.strptime(t, fmt).time()
+                            break
+                        except Exception:
+                            continue
+                    time_part = parsed.strftime("%H:%M") if parsed else t
+                else:
+                    time_part = t.strftime("%H:%M") if t else "00:00"
 
+                when = f"{date_part} at {time_part}"
                 Notification.objects.create(
                     user=request.user,
                     message=f"Appointment {appointment.appointment_id} booked for {when}."
                 )
-            except Exception:
-                # don't block booking on notification errors
-                pass
+            except Exception as notif_err:
+                # Log, but don’t block booking
+                import logging
+                logging.error("Notification error: %s", notif_err)
 
             return Response({"message": "Appointment booked successfully!"}, status=200)
+
         except Appointment.DoesNotExist:
-            return Response({"error": "Appointment not available or already booked."}, status=400)
+            return Response(
+                {"error": "Appointment not available or already booked."},
+                status=400,
+            )
+
+        except Exception as e:
+            # Catch-all for any unexpected issue
+            import logging
+            logging.exception("Unexpected error while booking appointment")
+            return Response(
+                {"error": "Internal server error. Please try again later."},
+                status=500,
+            )
 
 
 class CancelAppointmentView(APIView):
