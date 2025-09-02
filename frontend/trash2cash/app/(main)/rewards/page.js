@@ -193,7 +193,9 @@ export default function RewardsPage() {
                 <span className="text-md">
                   {nextThreshold !== null
                     ? `Points Required for ${nextTier} Tier: ${nextThreshold - user.points}`
-                    : "No next tier available or tier data missing."}
+                    : (sortedTiers.length > 0 && sortedTiers[sortedTiers.length - 1] === user.tier)
+                      ? <>You are at the highest tier! <span role="img" aria-label="celebrate">🎉</span></>
+                      : "Tier information is currently unavailable."}
                 </span>
                 </div>
                 <Progress value={progressPercent} className="h-4" />
