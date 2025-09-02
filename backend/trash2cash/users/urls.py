@@ -9,7 +9,7 @@ from .views import MyAppointmentsView, CustomAuthToken, change_password, GetAdmi
 
 urlpatterns = [
     path('my-appointments/', MyAppointmentsView.as_view()),  # <-- ADD THIS
-    path('appointments/<int:centre_id>/<str:date>/', AvailableAppointmentsView.as_view(), name='available-appointments'),   # Go to this to see all available appointments for a particular recycling centre e.g. http://127.0.0.1:8000/api/appointments/1/2025-05-06/
+    path('appointments/<int:centre_id>/<str:date>/', AvailableAppointmentsView.as_view(), name='available-appointments'),
     path('appointments/confirm/', ConfirmAppointmentView.as_view(), name='confirm-appointment'),
     path('appointments/cancel/', CancelAppointmentView.as_view(), name='cancel-appointment'),
     path('change-password/', change_password, name='change-password'),

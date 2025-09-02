@@ -218,7 +218,7 @@ export default function UploadPhoto() {
   const refresh = localStorage.getItem("refresh");
 
   // Try a test request with current access token
-  const testRes = await fetch("http://localhost:8000/api/validate-ott/", {
+  const testRes = await fetch("https://trash2cashpersonal.onrender.com/api/validate-ott/", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${access}`,
@@ -227,7 +227,7 @@ export default function UploadPhoto() {
 
   if (testRes.status === 401 && refresh) {
     // Access token expired, refresh it
-    const refreshRes = await fetch("http://localhost:8000/api/token/refresh/", {
+    const refreshRes = await fetch("https://trash2cashpersonal.onrender.com/api/token/refresh/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh }),
@@ -262,7 +262,7 @@ export default function UploadPhoto() {
     }
     try {
       const token = await getAccessToken();
-      const res = await fetch("http://localhost:8000/api/generate-ott/", {
+      const res = await fetch("https://trash2cashpersonal.onrender.com/api/generate-ott/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
