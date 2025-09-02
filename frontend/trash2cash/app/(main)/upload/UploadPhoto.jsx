@@ -140,7 +140,7 @@ export default function UploadPhoto() {
       return;
     }
 
-    const responseUser = await fetch("http://trash2cashpersonal.onrender.com/api/user-profile/", {
+    const responseUser = await fetch("https://trash2cashpersonal.onrender.com/api/user-profile/", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     if (responseUser.ok) {
