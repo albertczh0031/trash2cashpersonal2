@@ -2,8 +2,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: '127.0.0.1',
+        protocol: "https",
+        hostname: "trash2cashpersonal.onrender.com",
+        pathname: "/**", 
       }, // allow loading images from Django dev server
     ],
   },
