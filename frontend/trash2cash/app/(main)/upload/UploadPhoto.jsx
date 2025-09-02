@@ -46,10 +46,7 @@ async function getValidAccessToken() {
 
 
 export default function UploadPhoto() {
-  // On first load, clear uploadForm from localStorage to avoid stale data
-  useEffect(() => {
-    localStorage.removeItem('uploadForm');
-  }, []);
+  // Removed clearing uploadForm from localStorage on page load to preserve form data for booking
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [description, setDescription] = useState("");
@@ -82,19 +79,15 @@ export default function UploadPhoto() {
   };
 
   const handleClick = async () => {
-    // Only save to localStorage if all fields are filled
-    if (description && weight && brand && category) {
-      const uploadFormToSave = {
-        description,
-        weight,
-        brand,
-        category,
-      };
-      localStorage.setItem('uploadForm', JSON.stringify(uploadFormToSave));
-      console.log('[DEBUG] Saved to localStorage:', uploadFormToSave);
-    } else {
-      console.warn('[DEBUG] Not saving to localStorage: missing fields', { description, weight, brand, category });
-    }
+    // Always save to localStorage, even if some fields are missing
+    const uploadFormToSave = {
+      description,
+      weight,
+      brand,
+      category,
+    };
+    localStorage.setItem('uploadForm', JSON.stringify(uploadFormToSave));
+    console.log('[DEBUG] Saved to localStorage:', uploadFormToSave);
     setLoading(true); // disable button
     try {
       await handleUpload(); // your upload logic
@@ -165,7 +158,7 @@ export default function UploadPhoto() {
         setCategories(data.categories || []);
         if (data.message) setMessage(data.message); // show API success message
 
-        // Only update localStorage if all fields are filled and not empty
+        // Always update localStorage after upload, even if some fields are missing
         const uploadForm = {
           category: data.category || category || "",
           weight: weight,
@@ -175,20 +168,10 @@ export default function UploadPhoto() {
         if (data.item_id) {
           uploadForm.item_id = data.item_id;
         }
-        if (uploadForm.category && uploadForm.weight && uploadForm.brand && uploadForm.description) {
-          localStorage.setItem('uploadForm', JSON.stringify(uploadForm));
-          console.log('[DEBUG] Saved to localStorage after upload:', uploadForm);
-        } else {
-          console.warn('[DEBUG] Not saving to localStorage after upload: missing fields', uploadForm);
-        }
+        localStorage.setItem('uploadForm', JSON.stringify(uploadForm));
+        console.log('[DEBUG] Saved to localStorage after upload:', uploadForm);
 
-        // Now reset form fields
-        setSelectedFile(null);
-        setPreview(null);
-        setDescription("");
-        setWeight("");
-        setBrand("");
-        if (fileInputRef.current) fileInputRef.current.value = "";
+  // Do not reset form fields or clear localStorage here; wait until booking is complete
 
         // Show dialogs
         if (data.identified === true && data.message) setShowMessageDialog(true);
@@ -248,18 +231,14 @@ export default function UploadPhoto() {
     setShowPopup(false);
     // Always use the latest selected category (from ref)
     const selectedCategory = categoryRef.current || category;
-    // Only update localStorage if all fields are filled and not empty
-    if (selectedCategory && weight && brand && description) {
-      localStorage.setItem('uploadForm', JSON.stringify({
-        category: selectedCategory,
-        weight,
-        brand,
-        description
-      }));
-      console.log('[DEBUG] handleSelection called. Using selectedCategory:', selectedCategory, 'option:', option);
-    } else {
-      console.warn('[DEBUG] Not saving to localStorage in handleSelection: missing fields', { selectedCategory, weight, brand, description });
-    }
+    // Always update localStorage, even if some fields are missing
+    localStorage.setItem('uploadForm', JSON.stringify({
+      category: selectedCategory,
+      weight,
+      brand,
+      description
+    }));
+    console.log('[DEBUG] handleSelection called. Using selectedCategory:', selectedCategory, 'option:', option);
     try {
       const token = await getAccessToken();
       const res = await fetch("https://trash2cashpersonal.onrender.com/api/generate-ott/", {
