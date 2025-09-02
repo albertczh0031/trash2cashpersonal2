@@ -72,7 +72,7 @@ class Profile(models.Model):
     request_seller = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Profile(user={self.user.username}, street={self.street}, city={self.city}, postcode={self.postcode}, points={self.points})"
+        return self.user.username
 
     def update_tier(self):
         """
@@ -203,7 +203,7 @@ class RecyclingCentreAdmin(models.Model):
     recycling_centre = models.ForeignKey(RecyclingCentre, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Admin: {self.admin}, Recycling Centre: {self.recycling_centre}"
+        return f"{self.recycling_centre.name}"
 
 class Notification(models.Model):
     """

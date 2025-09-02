@@ -1,3 +1,8 @@
+centre1_admin;Centre 1;Admin;centre1_admin@example.com;123 Main St;New York;10001;3000;Bronze;django123;is_admin=True
+centre2_admin;Centre 2;Admin;centre2_admin@example.com;123 Main St;New York;10001;3000;Bronze;django123;is_admin=True
+centre3_admin;Centre 3;Admin;centre3_admin@example.com;123 Main St;New York;10001;3000;Bronze;django123;is_admin=True
+centre4_admin;Centre 4;Admin;centre4_admin@example.com;123 Main St;New York;10001;3000;Bronze;django123;is_admin=True
+centre5_admin;Centre 5;Admin;centre5_admin@example.com;123 Main St;New York;10001;3000;Bronze;django123;is_admin=True
 john_doe;John;Doe;john.doe@example.com;123 Main St;New York;10001;5000;Gold;django123;is_admin=True
 jane_smith;Jane;Smith;jane.smith@example.com;456 Elm St;Los Angeles;90001;3000;Silver;django123
 alice_wonder;Alice;Wonderland;alice.wonder@example.com;789 Oak St;Chicago;60601;7000;Gold;django123
@@ -26,3 +31,6 @@ mingdong;Ming Dong;Teh;mteh0004@student.monash.edu;Monash Uni;Malaysia;3151;3100
 sherylee;Sheryl;Lee;sheryl_lee_wl@yahoo.com.sg;Avenida Poblado;Medellin;455791;7600;Gold;django123;sheryl.png
 wanmun;Wan Mun;Thong;wtho0016@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;wanmun.png
 wenjian;Wen Jian;Yong;yyon0014@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;wenjian.png
+newseller1;New;Seller;newseller1@example.com;100 New St;Sydney;2000;0;Bronze;django123;is_seller=False;request_seller=True
+newseller2;New;Seller;newseller1@example.com;100 New St;Sydney;2000;0;Bronze;django123;is_seller=False;request_seller=True
+newseller3;New;Seller;newseller1@example.com;100 New St;Sydney;2000;0;Bronze;django123;is_seller=False;request_seller=True

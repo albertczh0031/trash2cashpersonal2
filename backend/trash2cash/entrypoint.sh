@@ -19,6 +19,9 @@ python manage.py populate_profiles
 echo "Populating recyclers..."
 python manage.py populate_recyclers
 
+echo "Populating centre admins..."
+python manage.py populate_centre_admins
+
 echo "Populating vouchers..."
 python manage.py populate_vouchers
 

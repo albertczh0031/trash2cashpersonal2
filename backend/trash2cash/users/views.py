@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Appointment, OTP, Profile, Notification, RecyclingCentreAdmin, RecyclingCentre
+from recycler.models import Category
 from .serializers import AppointmentSerializer, NotificationSerializer, UserSerializer, UserSignupSerializer, LoginSerializer
 
 from datetime import datetime
@@ -104,7 +105,6 @@ class AvailableAppointmentsView(APIView):
         return Response(serializer.data)
 
 # US 37: Confirm Appointment View: Allows a user to confirm an appointment
-@permission_classes([IsAuthenticated])
 class ConfirmAppointmentView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -113,68 +113,87 @@ class ConfirmAppointmentView(APIView):
         if not appointment_id:
             return Response({"error": "Appointment ID is required."}, status=400)
 
+
+        # Get category, item_id, and weight from request
+        category_name = request.data.get("category")
+        item_weight = request.data.get("weight")
+        item_id = request.data.get("item_id")
+        # Try to resolve category object
+        category_obj = None
+        if category_name:
+            try:
+                category_obj = Category.objects.get(name__iexact=category_name)
+            except Category.DoesNotExist:
+                return Response({"error": f"Category '{category_name}' not found."}, status=400)
+
         try:
             appointment = Appointment.objects.get(
-                appointment_id=appointment_id,
-                user_id__isnull=True,
-                status='Available'
+                appointment_id=appointment_id, user_id__isnull=True, status='Available'
             )
-
-            # Mark as booked
             appointment.user_id = request.user
             appointment.status = 'Booked'
+            if category_obj:
+                appointment.category = category_obj
+            if item_id is not None and str(item_id).strip() != "":
+                try:
+                    appointment.item_id = int(item_id)
+                except Exception:
+                    pass
+            if item_weight is not None and str(item_weight).strip() != "":
+                try:
+                    appointment.item_weight = float(item_weight)
+                except Exception:
+                    pass
             appointment.save()
-
-            # Try to create notification (don’t block if fails)
+            # Create a user notification for successful booking
             try:
-                from datetime import datetime as _dt
+                # Build datetime in format: "4 Sept 2025 at 16:00"
+                date_part = None
+                time_part = None
+                try:
+                    d = appointment.date
+                    if isinstance(d, str):
+                        from datetime import datetime as _dt
+                        d = _dt.strptime(d, "%Y-%m-%d").date()
+                    date_part = f"{d.day} {d.strftime('%b')} {d.year}"
+                except Exception:
+                    date_part = str(appointment.date)
 
-                # Format date
-                d = appointment.date
-                if isinstance(d, str):
-                    d = _dt.strptime(d, "%Y-%m-%d").date()
-                date_part = f"{d.day} {d.strftime('%b')} {d.year}"
+                try:
+                    t = appointment.time
+                    if t is None:
+                        time_part = "00:00"
+                    elif isinstance(t, str):
+                        from datetime import datetime as _dt
+                        parsed = None
+                        for fmt in ["%H:%M:%S", "%H:%M"]:
+                            try:
+                                parsed = _dt.strptime(t, fmt).time()
+                                break
+                            except Exception:
+                                continue
+                        if parsed:
+                            time_part = parsed.strftime("%H:%M")
+                        else:
+                            time_part = t
+                    else:
+                        time_part = t.strftime("%H:%M")
+                except Exception:
+                    time_part = str(appointment.time)
 
-                # Format time
-                t = appointment.time
-                if isinstance(t, str):
-                    parsed = None
-                    for fmt in ["%H:%M:%S", "%H:%M"]:
-                        try:
-                            parsed = _dt.strptime(t, fmt).time()
-                            break
-                        except Exception:
-                            continue
-                    time_part = parsed.strftime("%H:%M") if parsed else t
-                else:
-                    time_part = t.strftime("%H:%M") if t else "00:00"
+                when = f"{date_part} at {time_part}" if date_part and time_part else f"{appointment.date} {appointment.time}"
 
-                when = f"{date_part} at {time_part}"
                 Notification.objects.create(
                     user=request.user,
                     message=f"Appointment {appointment.appointment_id} booked for {when}."
                 )
-            except Exception as notif_err:
-                # Log, but don’t block booking
-                import logging
-                logging.error("Notification error: %s", notif_err)
+            except Exception:
+                # don't block booking on notification errors
+                pass
 
             return Response({"message": "Appointment booked successfully!"}, status=200)
-
         except Appointment.DoesNotExist:
-            return Response(
-                {"error": "Appointment not available or already booked."},
-                status=400,
-            )
-
-        except Exception as e:
-            # Catch-all for any unexpected issue
-            import logging
-            logging.exception("Unexpected error while booking appointment")
-            return Response(
-                {"error": "Internal server error. Please try again later."},
-                status=500,
-            )
+            return Response({"error": "Appointment not available or already booked."}, status=400)
 
 
 class CancelAppointmentView(APIView):
@@ -214,10 +233,14 @@ class CancelAppointmentView(APIView):
                 message=f"Appointment {appointment.appointment_id} cancelled."
             )
 
-            # Revert appointment to available and clear the user assignment so others can book it
+            # Revert appointment to available and clear the user assignment and details so others can book it
             appointment.user_id = None
             appointment.status = 'Available'
-            appointment.save(update_fields=['user_id', 'status'])
+            appointment.item_id = None
+            appointment.item_weight = None
+            appointment.category = None
+            appointment.points_earned = None
+            appointment.save(update_fields=['user_id', 'status', 'item_id', 'item_weight', 'category', 'points_earned'])
 
             return Response({"message": "Appointment cancelled and made available."}, status=200)
         except Exception as e:

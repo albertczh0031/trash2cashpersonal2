@@ -8,7 +8,7 @@ from rewards.models import Voucher
 
 admin.site.register(Voucher)
 admin.site.register(Tier)
-admin.site.register(RecyclingCentreAdmin)
+# admin.site.register(RecyclingCentreAdmin)
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -59,3 +59,8 @@ class NotificationAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'message']
     list_filter = ['is_read', 'created_at']
     ordering = ['-created_at']
+
+@admin.register(RecyclingCentreAdmin)
+class RecyclingCentreAdminAdmin(admin.ModelAdmin):
+    list_display = ['id', 'admin', 'recycling_centre']
+    list_editable = ['recycling_centre']

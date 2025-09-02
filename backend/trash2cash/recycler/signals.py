@@ -233,7 +233,7 @@ def check_pickup_arrival_time(sender, instance, **kwargs):
         ).exclude(pk=instance.pk)
 
         if conflicting_appointments.exists():
-            raise ValueError("This appointment conflicts with another booked appointment at the same date and time for this user.")
+            raise ValueError("This appointment conflicts with another booked appointment at the same date and time.")
 
         # # Ensure the appointment date and time is in the future
         # appointment_datetime = datetime.combine(instance.date, instance.time)

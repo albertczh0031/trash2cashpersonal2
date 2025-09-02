@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Voucher
 from .models import VoucherInstance
 
+
 # admin.site.register(Voucher)
 
 from django import forms

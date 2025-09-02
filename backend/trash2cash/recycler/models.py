@@ -43,5 +43,5 @@ class RecyclingCentre(models.Model):
     tags = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"Center Name: {self.name}, Email: {self.email}, Location at: {self.address}, Opened from {self.opening_time} to {self.closing_time}, Tags: {self.tags}"
+        return self.name
     

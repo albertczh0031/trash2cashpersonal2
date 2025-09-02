@@ -13,26 +13,32 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"File not found: {file_path}"))
             return
 
+
         with open(file_path, "r") as file:
             for line in file:
                 try:
                     fields = line.strip().split(";")
                     profile_pic = None
-                    
-                    # Handle different field counts based on presence of admin flag and profile pic
-                    if len(fields) == 12:  # username;...;password;admin_flag;profile_pic
-                        username, first_name, last_name, email, street, city, postcode, points, tier_desc, password, admin_flag, profile_pic = fields
-                    elif len(fields) == 11:
-                        # Could be username;...;password;admin_flag OR username;...;password;profile_pic
-                        username, first_name, last_name, email, street, city, postcode, points, tier_desc, password, last_field = fields
-                        if last_field.strip().startswith("is_admin="):
-                            admin_flag = last_field
-                        else:
-                            profile_pic = last_field
-                            admin_flag = "is_admin=False"
-                    else:  # len(fields) == 10
-                        username, first_name, last_name, email, street, city, postcode, points, tier_desc, password = fields
-                        admin_flag = "is_admin=False"
+                    is_seller = None
+                    request_seller = None
+                    admin_flag = "is_admin=False"
+
+                    # Parse fields and detect extra flags
+                    base_fields = fields[:10]
+                    extra_fields = fields[10:]
+
+                    username, first_name, last_name, email, street, city, postcode, points, tier_desc, password = base_fields
+
+                    for extra in extra_fields:
+                        extra = extra.strip()
+                        if extra.startswith("is_admin="):
+                            admin_flag = extra
+                        elif extra.startswith("is_seller="):
+                            is_seller = extra.split("=")[1].lower() == "true"
+                        elif extra.startswith("request_seller="):
+                            request_seller = extra.split("=")[1].lower() == "true"
+                        elif extra:
+                            profile_pic = extra
 
                     user, created = User.objects.get_or_create(username=username.strip(), defaults={
                         "first_name": first_name.strip(),
@@ -62,7 +68,10 @@ class Command(BaseCommand):
                         "points": int(points.strip()),
                         "tier": tier,
                     }
-                    
+                    if is_seller is not None:
+                        profile_defaults["is_seller"] = is_seller
+                    if request_seller is not None:
+                        profile_defaults["request_seller"] = request_seller
                     # Add profile picture if specified
                     if profile_pic:
                         profile_defaults["profile_picture"] = f"profile_pics/{profile_pic.strip()}"
