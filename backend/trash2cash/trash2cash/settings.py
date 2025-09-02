@@ -81,6 +81,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://trash2cashpersonal.onrender.com",
+    "https://trash2cashpersonal2.vercel.app",
 ]
 
 CSRF_COOKIE_SECURE = True
