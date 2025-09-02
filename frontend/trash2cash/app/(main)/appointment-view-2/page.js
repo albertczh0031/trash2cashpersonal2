@@ -146,7 +146,17 @@ const AppointmentPage = () => {
     console.log('[DEBUG] Raw uploadForm from localStorage:', rawUploadForm);
     let extraFields = {};
     if (rawUploadForm) {
-      try { extraFields = JSON.parse(rawUploadForm); } catch (e) { extraFields = {}; }
+      try {
+        extraFields = JSON.parse(rawUploadForm);
+        // Log each field for debugging
+        console.log('[DEBUG] Parsed extraFields:', extraFields);
+        console.log('[DEBUG] extraFields.category:', extraFields.category);
+        console.log('[DEBUG] extraFields.weight:', extraFields.weight);
+        console.log('[DEBUG] extraFields.brand:', extraFields.brand);
+        console.log('[DEBUG] extraFields.description:', extraFields.description);
+      } catch (e) {
+        extraFields = {};
+      }
     }
     // Fallback to localStorage if category is not in searchParams
     if (!category) {
@@ -210,6 +220,8 @@ const AppointmentPage = () => {
 
       const data = await response.json();
       console.log('[DEBUG] Booking success. Data:', data);
+      // Clear upload form data after successful booking
+      localStorage.removeItem('uploadForm');
       // alert("Appointment booked successfully!");
       // Find the appointment details from the list
       const booked = appointments.find((a) => a.appointment_id === appointmentId);
