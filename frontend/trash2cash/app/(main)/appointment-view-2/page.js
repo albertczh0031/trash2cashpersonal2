@@ -84,7 +84,6 @@ const AppointmentPage = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ appointment_id: appointmentId }),
-        credentials: "include",
       },
     );
     if (!res.ok) throw new Error("Failed to confirm appointment");
