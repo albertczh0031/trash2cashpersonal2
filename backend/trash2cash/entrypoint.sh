@@ -22,6 +22,9 @@ python manage.py populate_recyclers
 echo "Populating vouchers..."
 python manage.py populate_vouchers
 
+echo "Populating voucher instances..."
+python manage.py populate_voucher_instances
+
 echo "Populating recyclable identifiers..."
 python manage.py populate_recyclable_identifiers
 
