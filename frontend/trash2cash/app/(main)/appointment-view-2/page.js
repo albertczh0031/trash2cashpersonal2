@@ -271,11 +271,20 @@ const AppointmentPage = () => {
 
       {/* Confirmation Dialog */}
       {showConfirmation && confirmedAppointment && (
-        <AppointmentConfirmationDialog
-          open={showConfirmation}
-          onClose={() => setShowConfirmation(false)}
-          appointmentDetails={confirmedAppointment}
-        />
+        <>
+          {console.log("Dialog rendered with state:", {
+            showConfirmation,
+            confirmedAppointment,
+          })}
+          <AppointmentConfirmationDialog
+            open={showConfirmation} 
+            onClose={() => {
+              console.log("Dialog closed");
+              setShowConfirmation(false);
+            }}
+            appointmentDetails={confirmedAppointment}
+          />
+        </>
       )}
     </div>
   );
