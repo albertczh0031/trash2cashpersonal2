@@ -11,6 +11,7 @@ urlpatterns = [
     path('my-appointments/', MyAppointmentsView.as_view()),  # <-- ADD THIS
     path('appointments/<int:centre_id>/<str:date>/', AvailableAppointmentsView.as_view(), name='available-appointments'),   # Go to this to see all available appointments for a particular recycling centre e.g. http://127.0.0.1:8000/api/appointments/1/2025-05-06/
     path('appointments/confirm/', ConfirmAppointmentView.as_view(), name='confirm-appointment'),
+    path('appointments/cancel/', CancelAppointmentView.as_view(), name='cancel-appointment'),
     path('change-password/', change_password, name='change-password'),
     path('login/', CustomAuthToken.as_view(), name='login'),
     path('api/user-role/', get_user_role, name='user-role'),
@@ -31,6 +32,8 @@ urlpatterns = [
     path('request-seller-verification/', request_seller_verification, name='request-seller-verification'),
     path('get-seller-status/', get_seller_status, name='get-seller-status'),
     path('api/notifications/', GetUserNotificationsAPIView.as_view(), name='notifications-list'),
+    path('api/notifications/mark-all-read/', MarkAllNotificationsReadAPIView.as_view(), name='notifications-mark-all-read'),
+    path('api/notifications/<int:pk>/mark-read/', MarkNotificationReadAPIView.as_view(), name='notifications-mark-read'),
     path('api-auth/', include('rest_framework.urls')),
 
 ]

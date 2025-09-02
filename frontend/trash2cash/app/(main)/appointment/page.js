@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 export default function AppointmentView() {
   const [activeTab, setActiveTab] = useState("active");
@@ -46,6 +48,100 @@ export default function AppointmentView() {
     if (response.ok) {
       const data = await response.json();
       setAppointments(data);
+    }
+  };
+
+  // helper to refresh access token
+  const refreshAccessToken = async (refreshToken) => {
+    try {
+      const response = await fetch('https://trash2cashpersonal.onrender.com/api/token/refresh/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh: refreshToken }),
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.access;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  // Format date and time into display parts: short date (e.g. "4 Sep 2025") and time "HH:MM"
+  const formatDateTimeParts = (dateStr, timeStrRaw) => {
+    try {
+      const timePart = timeStrRaw || '00:00:00';
+      const dt = new Date(`${dateStr}T${timePart}`);
+      const datePart = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(dt);
+      // force 24-hour format so we get e.g. "16:00"
+      const timePartFormatted = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      return { datePart, timePartFormatted };
+    } catch (e) {
+      return { datePart: new Date(dateStr).toLocaleDateString(), timePartFormatted: '' };
+    }
+  };
+
+  const [cancelingAppointment, setCancelingAppointment] = useState(null); // appointment id being cancelled
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const openCancelConfirm = (appointment) => {
+    setCancelingAppointment(appointment);
+    setConfirmOpen(true);
+  };
+
+  const cancelAppointment = async () => {
+    if (!cancelingAppointment) return;
+    const appointmentId = cancelingAppointment.appointment_id;
+    const userToken = localStorage.getItem('access');
+    const refreshToken = localStorage.getItem('refresh');
+    if (!userToken || !refreshToken) {
+      alert('You must be logged in to cancel an appointment.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      let response = await fetch('https://trash2cashpersonal.onrender.com/api/appointments/cancel/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify({ appointment_id: appointmentId }),
+      });
+
+      if (response.status === 401) {
+        const newAccess = await refreshAccessToken(refreshToken);
+        if (newAccess) {
+          localStorage.setItem('access', newAccess);
+          response = await fetch('https://trash2cashpersonal.onrender.com/api/appointments/cancel/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${newAccess}`,
+            },
+            body: JSON.stringify({ appointment_id: appointmentId }),
+          });
+        } else {
+          throw new Error('Authentication failed');
+        }
+      }
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to cancel appointment');
+      }
+
+      // Success: remove from list
+      setAppointments((prev) => prev.filter((a) => a.appointment_id !== appointmentId));
+      // Optionally refresh notifications or show toast
+      setConfirmOpen(false);
+      setCancelingAppointment(null);
+    } catch (e) {
+      console.error('Cancel failed', e);
+      alert(e.message || 'Failed to cancel appointment');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -143,6 +239,7 @@ export default function AppointmentView() {
   }, [activeTab]);
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-br from-green-100 to-green-200">
       {/* Header */}
       <Card className="bg-gradient-to-bl from-green-100 to-green-200  shadow-md w-full rounded-none">
@@ -199,26 +296,66 @@ export default function AppointmentView() {
                 <tr className="bg-green-300 text-green-950">
                   <th className="border border-input px-4 py-2">Appointment</th>
                   <th className="border border-input px-4 py-2">Location</th>
-                  <th className="border border-input px-4 py-2">Date</th>
+                  <th className="border border-input px-4 py-2">Date · Time</th>
+                  <th className="border border-input px-4 py-2"></th>
                 </tr>
               </thead>
               <tbody>
-                {appointments.map((appointment) => (
-                  <tr
-                    key={appointment.appointment_id}
-                    className="text-center bg-secondary/30 text-foreground"
-                  >
-                    <td className="border border-input px-4 py-2">
-                      {appointment.appointment_id}
-                    </td>
-                    <td className="border border-input px-4 py-2">
-                      {appointment.centre_name}
-                    </td>
-                    <td className="border border-input px-4 py-2">
-                      {new Date(appointment.date).toLocaleDateString()}
+                {appointments.length === 0 ? (
+                  <tr className="text-center bg-secondary/10 text-gray-600">
+                    <td className="border border-input px-4 py-6" colSpan={4}>
+                      <div className="flex flex-col items-center gap-2">
+                        <p className="text-lg font-medium">You have no upcoming appointments.</p>
+                        <p className="text-sm text-gray-500">When you book an appointment it will appear here.</p>
+                        <div className="pt-2">
+                          <Button size="sm" onClick={() => window.location.href = '/upload'}>
+                            Book an appointment
+                          </Button>
+                        </div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  appointments.map((appointment) => (
+                    <tr
+                      key={appointment.appointment_id}
+                      className="text-center bg-secondary/30 text-foreground"
+                    >
+                      <td className="border border-input px-4 py-2 text-sm text-gray-700">
+                        {appointment.appointment_id}
+                      </td>
+                      <td className="border border-input px-4 py-2 text-sm text-gray-700">
+                        {appointment.centre_name}
+                      </td>
+                      <td className="border border-input px-4 py-2 text-sm text-gray-700">
+                        {(() => {
+                          const { datePart, timePartFormatted } = formatDateTimeParts(appointment.date, appointment.time);
+                          return (
+                            <div className="text-sm text-gray-700">
+                              <span>{datePart} <span className="text-gray-400">·</span> <span className="font-medium">{timePartFormatted}</span></span>
+                            </div>
+                          );
+                        })()}
+                      </td>
+                      <td className="border border-input px-4 py-2">
+                        {appointment.status === 'Booked' ? (
+                          <div className="flex items-center justify-center">
+                            <button
+                              onClick={() => openCancelConfirm(appointment)}
+                              aria-label={`Cancel appointment ${appointment.appointment_id}`}
+                              title="Cancel appointment"
+                              className={`w-8 h-8 rounded-full text-red-600 hover:bg-red-50 flex items-center justify-center focus:outline-none ${loading ? 'opacity-50 pointer-events-none' : ''}`}
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-600">{appointment.status}</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           )}
@@ -242,19 +379,19 @@ export default function AppointmentView() {
                     key={`${item.id}-${item.type}-${index}`} // Ensure unique key
                     className="text-center bg-secondary/30 text-foreground"
                   >
-                    <td className="border border-input px-4 py-2">
+                    <td className="border border-input px-4 py-2 text-sm text-gray-700">
                       {item.type === "voucher"
                         ? item.name
                         : item.type === "expired-voucher"
                         ? item.name
                         : `Ticket: ${item.centre_name}`} {/* Show "Ticket: ..." or "Expired Voucher [id]" */}
                     </td>
-                    <td className="border border-input px-4 py-2">
+                    <td className="border border-input px-4 py-2 text-sm text-gray-700">
                       {item.type === "voucher" || item.type === "expired-voucher"
                         ? `-${item.points_earned}`
                         : `+${item.points_earned}`} {/* Adjust points display */}
                     </td>
-                    <td className="border border-input px-4 py-2">
+                    <td className="border border-input px-4 py-2 text-sm text-gray-700">
                       {new Date(item.date).toLocaleDateString()}
                     </td>
                   </tr>
@@ -265,5 +402,28 @@ export default function AppointmentView() {
         </div>
       )}
     </div>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cancel appointment?</DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
+            Are you sure you want to cancel appointment {cancelingAppointment?.appointment_id} on {cancelingAppointment ? (() => {
+              const { datePart, timePartFormatted } = formatDateTimeParts(cancelingAppointment.date, cancelingAppointment.time);
+              return (
+                <span>
+                  {datePart} <span className="text-gray-400">·</span> <strong>{timePartFormatted}</strong>
+                </span>
+              );
+            })() : ''}?
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setConfirmOpen(false)}>Close</Button>
+            <Button variant="destructive" onClick={cancelAppointment}>Confirm Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

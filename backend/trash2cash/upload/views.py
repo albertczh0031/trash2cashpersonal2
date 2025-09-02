@@ -52,11 +52,16 @@ def upload_and_analyze(request):
 
         NON_REAL_IMAGE_LABELS = {'clip art', 'illustration', 'drawing', 'cartoon', 'sketch', 'vector graphics', 'graphics', 'animation'}
 
+
         if 'file' not in request.FILES:
             return Response({'error': 'No file uploaded.'}, status=400)
 
         # Get the uploaded file and metadata from the request
         file = request.FILES.get('file')
+
+        if not file.content_type.startswith("image/"):
+            return Response({'error': 'Unsupported file type.'}, status=400)
+
         description = request.POST.get('description', '')
         weight = request.POST.get('weight', '')
         brand = request.POST.get('brand', '')

@@ -48,7 +48,7 @@ class OneTimeToken(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     def is_expired(self):
-        return (timezone.now() - self.created_at).total_seconds() > 1
+        return (timezone.now() - self.created_at).total_seconds() > 10
 
     def __str__(self):
         return f"{self.user.username} - {self.token}"

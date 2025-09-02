@@ -175,28 +175,66 @@ export default function UploadPhoto() {
   };
 
   const handleConfirm = () => setShowPopup(true);
+  const getAccessToken = async () => {
+  let access = localStorage.getItem("access");
+  const refresh = localStorage.getItem("refresh");
+
+  // Try a test request with current access token
+  const testRes = await fetch("https://trash2cashpersonal.onrender.com/api/validate-ott/", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${access}`,
+    },
+  });
+
+  if (testRes.status === 401 && refresh) {
+    // Access token expired, refresh it
+    const refreshRes = await fetch("https://trash2cashpersonal.onrender.com/api/token/refresh/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh }),
+    });
+
+    if (!refreshRes.ok) throw new Error("Token refresh failed");
+
+    const refreshData = await refreshRes.json();
+    access = refreshData.access;
+
+    // Save new token
+    localStorage.setItem("access", access);
+  }
+
+  return access;
+};
   const handleSelection = async (option) => {
-    setShowPopup(false);
-    const token = localStorage.getItem("access"); // JWT
-      if (!token) {
-        alert("You need to log in.");
-      return;
-    }
+  setShowPopup(false);
+
+  try {
+    const token = await getAccessToken();
+
     const res = await fetch("https://trash2cashpersonal.onrender.com/api/generate-ott/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // secure with JWT
+        Authorization: `Bearer ${token}`,
       },
     });
 
+    if (!res.ok) throw new Error("Failed to generate OTT");
+
     const data = await res.json();
     if (data.one_time_token) {
-      router.replace(`/recycling-centres?category=${category}&option=${option}&ott=${encodeURIComponent(data.one_time_token)}`);
+      router.replace(
+        `/recycling-centres?category=${category}&option=${option}&ott=${encodeURIComponent(data.one_time_token)}`
+      );
     } else {
       alert("Failed to generate secure token");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("You need to log in again.");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex flex-col items-center justify-start p-4 space-y-6">
@@ -249,7 +287,7 @@ export default function UploadPhoto() {
         >
           {selectedFile ? "Change File" : "Choose File"}
         </button>
-        <input type="file" className="hidden" ref={fileInputRef} onChange={handleFileChange}/>
+        <input type="file" className="hidden" ref={fileInputRef} onChange={handleFileChange} accept="image/*" />
 
         {/* Form fields */}
         <input
@@ -260,8 +298,8 @@ export default function UploadPhoto() {
             onChange={(e) => setDescription(e.target.value)}
         />
         <input
-            type="text"
-            placeholder="Weight"
+            type="number"
+            placeholder="Weight (kg)"
             className="w-full p-3 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}

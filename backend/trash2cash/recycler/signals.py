@@ -9,7 +9,7 @@ from timezone_field.backends import pytz
 
 from trash2cash import settings
 from users.models import Appointment, User, Profile
-from recycler.models import RecyclingCentre
+from recycler.models import RecyclingCentre, Category
 from recycler.email_sending import send_appointment_email, send_drop_off_email
 from datetime import timedelta, datetime
 from django.utils.timezone import make_aware, now, localtime, get_current_timezone
@@ -75,11 +75,6 @@ def send_appointment_confirmation(sender, instance, created, **kwargs):
             user_postcode=user_postcode
         )
 
-        # Add points to user profile
-        increment_user_points(user)
-
-
-
 
         # Schedule the reminder email 1 hour before appointment
         # appointment_datetime = datetime.combine(instance.date, instance.time if instance.is_dropoff else instance.arrival_time)
@@ -111,7 +106,8 @@ def send_appointment_confirmation(sender, instance, created, **kwargs):
             eta=eta   # prevent scheduling in the past
         )
 
-def increment_user_points(user: User):
+
+def increment_user_points(user: User, appointment: Appointment):
     """
     Increment the user's points based on the item category and the item weight
     """
@@ -168,6 +164,28 @@ def increment_user_points(user: User):
     profile.save()
     logger.info(f"User {user} points incremented by {points_earned}. New points total: {profile.points}")
 
+    # Get the appointment and update the points_earned field
+    try:
+        logger.debug(f"Appointment fetched: {appointment}")
+        if appointment:
+            logger.debug(f"Appointment - points earned: {points_earned}")
+            logger.debug(f"Appointment - item_weight: {item_weight}")
+            logger.debug(f"Appointment - appointment_id: {appointment.appointment_id}")
+            logger.debug(f"Appointment - item_id: {item.item_id}")
+
+            appointment.points_earned = points_earned
+            appointment.item_weight = item_weight
+            appointment.item_id = item.item_id
+            appointment.category = Category.objects.get(name=item.category)
+            logger.debug(f"User {user} appointment updated")
+            logger.debug(f"Appointment {appointment.appointment_id} points_earned updated to {points_earned}")
+        else:
+            logger.warning(f"No appointment found for user {user} to update points_earned")
+    except Appointment.DoesNotExist:
+        logger.error(f"Appointment for user {user} does not exist")
+        return
+
+
 
 @receiver(pre_save, sender=Appointment)
 def check_pickup_arrival_time(sender, instance, **kwargs):
@@ -204,6 +222,37 @@ def check_pickup_arrival_time(sender, instance, **kwargs):
 
         # Send email to the user
         send_drop_off_email(user_email, appointment_user, appointment_centre, drop_off_time)
+
+    if instance.user_id and instance.get_status_display() == "Booked":
+        # If the appointment is booked, ensure no other appointments at the same date and time for the same user
+        conflicting_appointments = Appointment.objects.filter(
+            date=instance.date,
+            time=instance.time,
+            status='Booked',
+            user_id=instance.user_id
+        ).exclude(pk=instance.pk)
+
+        if conflicting_appointments.exists():
+            raise ValueError("This appointment conflicts with another booked appointment at the same date and time for this user.")
+
+        # # Ensure the appointment date and time is in the future
+        # appointment_datetime = datetime.combine(instance.date, instance.time)
+        # kl_tz = ZoneInfo(settings.TIME_ZONE)
+        # aware_appointment_datetime = make_aware(appointment_datetime, timezone=kl_tz)
+        # now_kl = now().astimezone(kl_tz)
+        # if aware_appointment_datetime <= now_kl:
+        #     raise ValueError("Appointment date and time must be in the future.")
+        #
+        # logger.debug(f"Appointment {instance.pk} for user {instance.user_id} at centre {instance.centre} on {instance.date} at {instance.time} is valid and booked.")
+
+        # Clean up temporary appointments older than 1 minute
+        Appointment.cleanup_temporary_appointments(expiration_minutes=1)
+        logger.debug("Cleaned up temporary appointments older than 1 minute.")
+
+        # Increment user points
+        increment_user_points(instance.user_id, instance)
+
+
 
 
 

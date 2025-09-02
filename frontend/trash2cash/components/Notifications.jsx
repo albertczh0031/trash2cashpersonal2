@@ -179,6 +179,28 @@ export default function NotificationBell({
     }
   }, []);
 
+  const markAllRead = React.useCallback(async () => {
+    try {
+      const token = getAccessToken();
+      if (!token) return;
+      const res = await fetch(API_URL + "mark-all-read/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        // Clear items and unread count
+        setItems([]);
+      } else {
+        console.warn("Failed to mark notifications as read", res.status);
+      }
+    } catch (e) {
+      console.error("markAllRead failed", e);
+    }
+  }, []);
+
   React.useEffect(() => { fetchNotifs(); }, [fetchNotifs]);
   React.useEffect(() => {
     const id = setInterval(fetchNotifs, pollMs);
@@ -200,10 +222,31 @@ export default function NotificationBell({
 
       <DropdownMenuContent align="end" className={`${width} p-0`}>
         <div className="p-3">
-          <DropdownMenuLabel className="text-base">Notifications</DropdownMenuLabel>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {loading ? "Loading…" : unreadCount === 0 ? "You’re all caught up." : "Unread only"}
-          </p>
+          <div className="flex items-start justify-between">
+            <div className="flex flex-col items-start">
+              <DropdownMenuLabel className="text-base pl-0 m-0">Notifications</DropdownMenuLabel>
+              <p className="mt-1 text-xs text-muted-foreground ml-0">
+                {loading
+                  ? "Loading…"
+                  : unreadCount === 0
+                    ? "You're all caught up!"
+                    : `You have ${unreadCount} unread notification${unreadCount === 1 ? "" : "s"}`
+                }
+              </p>
+            </div>
+
+            {items.length > 0 && (
+              <div className="ml-4">
+                <button
+                  onClick={() => markAllRead()}
+                  className="text-xs text-muted-foreground hover:underline"
+                  disabled={loading}
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         <DropdownMenuSeparator />
 
@@ -227,6 +270,33 @@ export default function NotificationBell({
                     <div className="text-sm">{n.message}</div>
                     <div className="mt-1 text-xs text-muted-foreground">{timeAgo(n.created_at)}</div>
                   </div>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      const token = getAccessToken();
+                      if (!token) return;
+                      // Optimistically remove
+                      setItems((cur) => cur.filter((x) => x.id !== n.id));
+                      try {
+                        const res = await fetch(`${API_URL}${n.id}/mark-read/`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                        });
+                        if (!res.ok) {
+                          console.warn("Failed to mark notification read", res.status);
+                          // On failure, re-add item (simple rollback)
+                          fetchNotifs();
+                        }
+                      } catch (err) {
+                        console.error("Error marking notification read", err);
+                        fetchNotifs();
+                      }
+                    }}
+                    className="ml-3 text-xs text-muted-foreground hover:text-red-600"
+                    aria-label="Dismiss notification"
+                  >
+                    ×
+                  </button>
                 </DropdownMenuItem>
               ))}
             </div>

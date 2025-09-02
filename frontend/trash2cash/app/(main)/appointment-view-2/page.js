@@ -20,6 +20,23 @@ const AppointmentPage = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmedAppointment, setConfirmedAppointment] = useState(null);
 
+  // live system time for display
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // format a Date instance to local YYYY-MM-DD (avoids UTC shifting when using toISOString)
+  const formatDateLocal = (d) => {
+    if (!d) return null;
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+
   // Validate OTT
   useEffect(() => {
     if (!ott) {
@@ -70,7 +87,7 @@ const AppointmentPage = () => {
   }, []);
 
   useEffect(() => {
-    const formattedDate = selectedDate.toISOString().split("T")[0]; // Re-formats the date as YYYY-MM-DD
+    const formattedDate = formatDateLocal(selectedDate); // Local YYYY-MM-DD to avoid timezone shifts
     const centreId = searchParams.get("centreId"); // Get the centre ID from the URL
     const isDropoff = searchParams.get("is_dropoff"); // Get the is_dropoff parameter from the URL
 
@@ -172,7 +189,7 @@ const AppointmentPage = () => {
       const booked = appointments.find((a) => a.appointment_id === appointmentId);
       setConfirmedAppointment({
         ...booked,
-        date: selectedDate.toISOString().split("T")[0],
+        date: formatDateLocal(selectedDate),
       });
       setShowConfirmation(true);
 

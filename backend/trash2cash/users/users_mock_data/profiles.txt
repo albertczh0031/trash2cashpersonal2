@@ -1,28 +1,28 @@
-john_doe;John;Doe;john.doe@example.com;123 Main St;New York;10001;500;Gold;django123;is_admin=True
-jane_smith;Jane;Smith;jane.smith@example.com;456 Elm St;Los Angeles;90001;300;Silver;django123
-alice_wonder;Alice;Wonderland;alice.wonder@example.com;789 Oak St;Chicago;60601;700;Platinum;django123
-bob_builder;Bob;Builder;bob.builder@example.com;321 Pine St;Houston;77001;200;Bronze;django123
-charlie_brown;Charlie;Brown;charlie.brown@example.com;654 Maple St;San Francisco;94101;450;Silver;django123
-diana_prince;Diana;Prince;diana.prince@example.com;987 Cedar St;Seattle;98101;800;Gold;django123
-edward_snow;Edward;Snowden;edward.snow@example.com;123 Birch St;Boston;02101;600;Gold;django123
-fiona_shrek;Fiona;Shrek;fiona.shrek@example.com;456 Willow St;Miami;33101;350;Silver;django123
-george_clooney;George;Clooney;george.clooney@example.com;789 Aspen St;Denver;80201;1000;Platinum;django123
-hannah_montana;Hannah;Montana;hannah.montana@example.com;321 Redwood St;Atlanta;30301;150;Bronze;django123
-trash2cash_admin;Edgar;Poe;t2c.zerowastesolutions@gmail.com;321 Redwood St;Atlanta;30301;150;Bronze;django123;is_admin=True
-trash2cash;Edgar;Poe;t2c.zerowastesolutions@gmail.com;321 Redwood St;Atlanta;30301;150;Bronze;django123
-pinguinin;Pinguinin;Negrito;pinguinin@gmail.com;Calle 10;Medellin;4500;100;Bronze;django123;pinguinin.png
-pinguinon;Pinguinon;Negrito;pinguinon@gmail.com;Calle 10;Medellin;4500;100;Bronze;django123;pinguinon.png
-tomas;Tomas;C;tomas@gmail.com;Calle 10;Medellin;4500;100;Bronze;django123;tomas.png
-camaroncin;Camaroncin;C;camaroncin@gmail.com;Calle 10;Medellin;4500;100;Bronze;django123;camaroncin.png
-charmaine;Charmaine;Chee;cche0258@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;charmaine.png
-chengyan;Cheng Yan;Lee;clee0158@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;chengyan.png
-clarence;Clarence;Ang;cang0015@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;clarence.png
-henry;Henry;Ma;hmaa0030@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;henry.png
-jc;JC;Ng;jngg0137@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;jc.png
-kaixuan;Kai Xuan;Lau;klau0038@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;kaixuan.png
-lambert;Albert;Chao;zcha0031@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;albert.png
-miguel;Miguel;Varilla;mvar0010@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;miguel.png
-mingdong;Ming Dong;Teh;mteh0004@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;mingdong.png
-sherylee;Sheryl;Lee;sheryl_lee_wl@yahoo.com.sg;Avenida Poblado;Medellin;455791;850;Platinum;django123;sheryl.png
-wanmun;Wan Mun;Thong;wtho0016@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;wanmun.png
-wenjian;Wen Jian;Yong;yyon0014@student.monash.edu;Monash Uni;Malaysia;3151;200;Bronze;django123;wenjian.png
+john_doe;John;Doe;john.doe@example.com;123 Main St;New York;10001;5000;Gold;django123;is_admin=True
+jane_smith;Jane;Smith;jane.smith@example.com;456 Elm St;Los Angeles;90001;3000;Silver;django123
+alice_wonder;Alice;Wonderland;alice.wonder@example.com;789 Oak St;Chicago;60601;7000;Gold;django123
+bob_builder;Bob;Builder;bob.builder@example.com;321 Pine St;Houston;77001;2000;Bronze;django123
+charlie_brown;Charlie;Brown;charlie.brown@example.com;654 Maple St;San Francisco;94101;4500;Silver;django123
+diana_prince;Diana;Prince;diana.prince@example.com;987 Cedar St;Seattle;98101;8000;Platinum;django123
+edward_snow;Edward;Snowden;edward.snow@example.com;123 Birch St;Boston;02101;6000;Gold;django123
+fiona_shrek;Fiona;Shrek;fiona.shrek@example.com;456 Willow St;Miami;33101;3500;Silver;django123
+george_clooney;George;Clooney;george.clooney@example.com;789 Aspen St;Denver;80201;10000;Platinum;django123
+hannah_montana;Hannah;Montana;hannah.montana@example.com;321 Redwood St;Atlanta;30301;1500;Bronze;django123
+trash2cash_admin;Edgar;Poe;t2c.zerowastesolutions@gmail.com;321 Redwood St;Atlanta;30301;1500;Bronze;django123;is_admin=True
+trash2cash;Edgar;Poe;t2c.zerowastesolutions@gmail.com;321 Redwood St;Atlanta;30301;1500;Bronze;django123
+pinguinin;Pinguinin;Negrito;pinguinin@gmail.com;Calle 10;Medellin;4500;3100;Bronze;django123;pinguinin.png
+pinguinon;Pinguinon;Negrito;pinguinon@gmail.com;Calle 10;Medellin;4500;3100;Bronze;django123;pinguinon.png
+tomas;Tomas;C;tomas@gmail.com;Calle 10;Medellin;4500;3100;Bronze;django123;tomas.png
+camaroncin;Camaroncin;C;camaroncin@gmail.com;Calle 10;Medellin;4500;3100;Bronze;django123;camaroncin.png
+charmaine;Charmaine;Chee;cche0258@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;charmaine.png
+chengyan;Cheng Yan;Lee;clee0158@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;chengyan.png
+clarence;Clarence;Ang;cang0015@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;clarence.png
+henry;Henry;Ma;hmaa0030@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;henry.png
+jc;JC;Ng;jngg0137@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;jc.png
+kaixuan;Kai Xuan;Lau;klau0038@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;kaixuan.png
+lambert;Albert;Chao;zcha0031@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;albert.png
+miguel;Miguel;Varilla;mvar0010@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;miguel.png
+mingdong;Ming Dong;Teh;mteh0004@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;mingdong.png
+sherylee;Sheryl;Lee;sheryl_lee_wl@yahoo.com.sg;Avenida Poblado;Medellin;455791;7600;Gold;django123;sheryl.png
+wanmun;Wan Mun;Thong;wtho0016@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;wanmun.png
+wenjian;Wen Jian;Yong;yyon0014@student.monash.edu;Monash Uni;Malaysia;3151;3100;Bronze;django123;wenjian.png

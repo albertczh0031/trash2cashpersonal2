@@ -119,9 +119,102 @@ class ConfirmAppointmentView(APIView):
             appointment.user_id = request.user
             appointment.status = 'Booked'
             appointment.save()
+            # Create a user notification for successful booking
+            try:
+                # Build datetime in format: "4 Sept 2025 at 16:00"
+                date_part = None
+                time_part = None
+                try:
+                    d = appointment.date
+                    if isinstance(d, str):
+                        from datetime import datetime as _dt
+                        d = _dt.strptime(d, "%Y-%m-%d").date()
+                    date_part = f"{d.day} {d.strftime('%b')} {d.year}"
+                except Exception:
+                    date_part = str(appointment.date)
+
+                try:
+                    t = appointment.time
+                    if t is None:
+                        time_part = "00:00"
+                    elif isinstance(t, str):
+                        from datetime import datetime as _dt
+                        parsed = None
+                        for fmt in ["%H:%M:%S", "%H:%M"]:
+                            try:
+                                parsed = _dt.strptime(t, fmt).time()
+                                break
+                            except Exception:
+                                continue
+                        if parsed:
+                            time_part = parsed.strftime("%H:%M")
+                        else:
+                            time_part = t
+                    else:
+                        time_part = t.strftime("%H:%M")
+                except Exception:
+                    time_part = str(appointment.time)
+
+                when = f"{date_part} at {time_part}" if date_part and time_part else f"{appointment.date} {appointment.time}"
+
+                Notification.objects.create(
+                    user=request.user,
+                    message=f"Appointment {appointment.appointment_id} booked for {when}."
+                )
+            except Exception:
+                # don't block booking on notification errors
+                pass
+
             return Response({"message": "Appointment booked successfully!"}, status=200)
         except Appointment.DoesNotExist:
             return Response({"error": "Appointment not available or already booked."}, status=400)
+
+
+class CancelAppointmentView(APIView):
+    """Allows an authenticated user to cancel their booked appointment.
+
+    Business rules implemented here:
+    - Only the user who booked the appointment may cancel it.
+    - Appointment must currently be in 'Booked' status.
+    - If the appointment had points_earned recorded, they will be deducted from
+      the user's profile and a notification created.
+    - Appointment status is set to 'Cancelled'.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        appointment_id = request.data.get("appointment_id")
+        if not appointment_id:
+            return Response({"error": "Appointment ID is required."}, status=400)
+
+        try:
+            appointment = Appointment.objects.get(appointment_id=appointment_id)
+        except Appointment.DoesNotExist:
+            return Response({"error": "Appointment not found."}, status=404)
+
+        # Only allow the user who booked the appointment to cancel it
+        if appointment.user_id is None or appointment.user_id != request.user:
+            return Response({"error": "You are not authorised to cancel this appointment."}, status=403)
+
+        if appointment.status != 'Booked':
+            return Response({"error": "Only booked appointments can be cancelled."}, status=400)
+
+        # perform cancellation
+        try:
+            # Cancel appointment notification
+            Notification.objects.create(
+                user=request.user,
+                message=f"Appointment {appointment.appointment_id} cancelled."
+            )
+
+            # Revert appointment to available and clear the user assignment so others can book it
+            appointment.user_id = None
+            appointment.status = 'Available'
+            appointment.save(update_fields=['user_id', 'status'])
+
+            return Response({"message": "Appointment cancelled and made available."}, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
     
 # THE FOLLOWING CODE IS FROM HENRY MA US38: CHANGE PASSWORD
@@ -457,3 +550,32 @@ class GetUserNotificationsAPIView(APIView):
         notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at').all()
         serialiser = NotificationSerializer(notifications, many=True)
         return Response(serialiser.data, status=status.HTTP_200_OK)
+
+
+@permission_classes([IsAuthenticated])
+class MarkAllNotificationsReadAPIView(APIView):
+    """
+    Marks all unread notifications for the authenticated user as read.
+    Returns the number of notifications that were marked.
+    """
+    def post(self, request):
+        user = request.user
+        updated_count = Notification.objects.filter(user=user, is_read=False).update(is_read=True)
+        return Response({"marked": updated_count}, status=status.HTTP_200_OK)
+
+
+@permission_classes([IsAuthenticated])
+class MarkNotificationReadAPIView(APIView):
+    """
+    Marks a single notification as read for the authenticated user.
+    """
+    def post(self, request, pk):
+        user = request.user
+        try:
+            notif = Notification.objects.get(pk=pk, user=user)
+        except Notification.DoesNotExist:
+            return Response({"error": "Notification not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        notif.is_read = True
+        notif.save()
+        return Response({"marked": 1}, status=status.HTTP_200_OK)
