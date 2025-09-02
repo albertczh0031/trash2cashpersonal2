@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { UploadForm } from "@/components/upload/UploadForm";
 import { IdentificationDialog } from "@/components/upload/IdentificationDialog";
@@ -46,6 +46,10 @@ async function getValidAccessToken() {
 
 
 export default function UploadPhoto() {
+  // On first load, clear uploadForm from localStorage to avoid stale data
+  useEffect(() => {
+    localStorage.removeItem('uploadForm');
+  }, []);
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [description, setDescription] = useState("");
@@ -54,6 +58,7 @@ export default function UploadPhoto() {
   const [message, setMessage] = useState("");
   const [identified, setIdentified] = useState(null);
   const [category, setCategory] = useState("");
+  const categoryRef = useRef("");
   const [categories, setCategories] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showCategoryDialog, setShowCategoryDialog] = useState(false);
@@ -77,6 +82,19 @@ export default function UploadPhoto() {
   };
 
   const handleClick = async () => {
+    // Only save to localStorage if all fields are filled
+    if (description && weight && brand && category) {
+      const uploadFormToSave = {
+        description,
+        weight,
+        brand,
+        category,
+      };
+      localStorage.setItem('uploadForm', JSON.stringify(uploadFormToSave));
+      console.log('[DEBUG] Saved to localStorage:', uploadFormToSave);
+    } else {
+      console.warn('[DEBUG] Not saving to localStorage: missing fields', { description, weight, brand, category });
+    }
     setLoading(true); // disable button
     try {
       await handleUpload(); // your upload logic
@@ -122,7 +140,7 @@ export default function UploadPhoto() {
       return;
     }
 
-    const responseUser = await fetch("https://trash2cashpersonal.onrender.com/api/user-profile/", {
+    const responseUser = await fetch("http://trash2cashpersonal.onrender.com/api/user-profile/", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     if (responseUser.ok) {
@@ -147,7 +165,24 @@ export default function UploadPhoto() {
         setCategories(data.categories || []);
         if (data.message) setMessage(data.message); // show API success message
 
-        // Reset form fields
+        // Only update localStorage if all fields are filled and not empty
+        const uploadForm = {
+          category: data.category || category || "",
+          weight: weight,
+          brand: brand,
+          description: description,
+        };
+        if (data.item_id) {
+          uploadForm.item_id = data.item_id;
+        }
+        if (uploadForm.category && uploadForm.weight && uploadForm.brand && uploadForm.description) {
+          localStorage.setItem('uploadForm', JSON.stringify(uploadForm));
+          console.log('[DEBUG] Saved to localStorage after upload:', uploadForm);
+        } else {
+          console.warn('[DEBUG] Not saving to localStorage after upload: missing fields', uploadForm);
+        }
+
+        // Now reset form fields
         setSelectedFile(null);
         setPreview(null);
         setDescription("");
@@ -157,7 +192,10 @@ export default function UploadPhoto() {
 
         // Show dialogs
         if (data.identified === true && data.message) setShowMessageDialog(true);
-        else if (data.identified === false && data.message) setShowCategoryDialog(true);
+        else if (data.identified === false && data.message) {
+          console.log('[DEBUG] Opening CategoryDialog. Current category:', category, 'categories:', categories);
+          setShowCategoryDialog(true);
+        }
 
         if (data.appointment) {
           setAppointmentDetails({
@@ -180,7 +218,7 @@ export default function UploadPhoto() {
   const refresh = localStorage.getItem("refresh");
 
   // Try a test request with current access token
-  const testRes = await fetch("https://trash2cashpersonal.onrender.com/api/validate-ott/", {
+  const testRes = await fetch("http://localhost:8000/api/validate-ott/", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${access}`,
@@ -189,7 +227,7 @@ export default function UploadPhoto() {
 
   if (testRes.status === 401 && refresh) {
     // Access token expired, refresh it
-    const refreshRes = await fetch("https://trash2cashpersonal.onrender.com/api/token/refresh/", {
+    const refreshRes = await fetch("http://localhost:8000/api/token/refresh/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh }),
@@ -207,34 +245,63 @@ export default function UploadPhoto() {
   return access;
 };
   const handleSelection = async (option) => {
-  setShowPopup(false);
-
-  try {
-    const token = await getAccessToken();
-
-    const res = await fetch("https://trash2cashpersonal.onrender.com/api/generate-ott/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) throw new Error("Failed to generate OTT");
-
-    const data = await res.json();
-    if (data.one_time_token) {
-      router.replace(
-        `/recycling-centres?category=${category}&option=${option}&ott=${encodeURIComponent(data.one_time_token)}`
-      );
+    setShowPopup(false);
+    // Always use the latest selected category (from ref)
+    const selectedCategory = categoryRef.current || category;
+    // Only update localStorage if all fields are filled and not empty
+    if (selectedCategory && weight && brand && description) {
+      localStorage.setItem('uploadForm', JSON.stringify({
+        category: selectedCategory,
+        weight,
+        brand,
+        description
+      }));
+      console.log('[DEBUG] handleSelection called. Using selectedCategory:', selectedCategory, 'option:', option);
     } else {
-      alert("Failed to generate secure token");
+      console.warn('[DEBUG] Not saving to localStorage in handleSelection: missing fields', { selectedCategory, weight, brand, description });
     }
-  } catch (err) {
-    console.error(err);
-    alert("You need to log in again.");
-  }
-};
+    try {
+      const token = await getAccessToken();
+      const res = await fetch("http://localhost:8000/api/generate-ott/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to generate OTT");
+      const data = await res.json();
+      if (data.one_time_token) {
+        console.log('[DEBUG] Navigating to /recycling-centres with:', {
+          category: selectedCategory,
+          option,
+          ott: data.one_time_token
+        });
+        router.replace(
+          `/recycling-centres?category=${selectedCategory}&option=${option}&ott=${encodeURIComponent(data.one_time_token)}`
+        );
+      } else {
+        alert("Failed to generate secure token");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("You need to log in again.");
+    }
+  };
+
+  // Restore form fields from localStorage if present
+  useEffect(() => {
+    const saved = localStorage.getItem('uploadForm');
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.category) setCategory(data.category);
+        if (data.weight) setWeight(data.weight);
+        if (data.brand) setBrand(data.brand);
+        if (data.description) setDescription(data.description);
+      } catch (e) { /* ignore */ }
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex flex-col items-center justify-start p-4 space-y-6">
@@ -335,11 +402,19 @@ export default function UploadPhoto() {
         <CategoryDialog
             showCategoryDialog={showCategoryDialog}
             categories={categories}
-            onClose={(open) => setShowCategoryDialog(open)}
+            onClose={(open) => {
+              console.log('[DEBUG] CategoryDialog closed. open:', open, 'Current category:', category);
+              setShowCategoryDialog(open);
+            }}
             onCategorySelect={(cat) => {
+              console.log('[DEBUG] Category selected:', cat);
               setCategory(cat);
+              categoryRef.current = cat;
               setShowCategoryDialog(false);
               setShowPopup(true);
+              setTimeout(() => {
+                console.log('[DEBUG] After setCategory, category is now:', category, 'categoryRef.current:', categoryRef.current);
+              }, 0);
             }}
         />
         <AppointmentDialog

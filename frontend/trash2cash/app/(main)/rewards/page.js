@@ -10,16 +10,25 @@ const VOUCHER_API = 'https://trash2cashpersonal.onrender.com/api/rewards/get-vou
 const TIER_PRIORITY = { Bronze: 1, Silver: 2, Gold: 3, Platinum: 4 };
 const TABS = { POINTS: 'points', UNREDEEMED: 'unredeemed', REDEEMED: 'redeemed' };
 
+function buildUser(data = {}) {
+  // HARDCODED FOR NOW: End of October (month is 0-indexed)
+  const fallbackExpiry = new Date(new Date().getFullYear(), 8, 18).toISOString();
+  return {
+    name: data.username ?? 'User',
+    tier: data.tier ?? 'Bronze',
+    points: data.points ?? 0,
+    expiring_points: data.expiring_points ?? 120,
+    expiry_date: data.expiry_date ?? fallbackExpiry,
+    tier_thresholds: data.tier_thresholds ?? {},
+    current_tier_threshold: data.current_tier_threshold,
+    next_tier: data.next_tier,
+    next_tier_threshold: data.next_tier_threshold,
+  };
+}
+
 export default function RewardsPage() {
   const [vouchers, setVouchers] = useState([]);
-  const [user, setUser] = useState({
-    name: 'User',
-    tier: 'Bronze',
-    points: 0,
-    expiring_points: null,
-    expiry_date: null,
-    tier_thresholds: {}
-  });
+  const [user, setUser] = useState(buildUser());
   const [activeTab, setActiveTab] = useState(TABS.POINTS);
 
   useEffect(() => {
@@ -42,17 +51,7 @@ export default function RewardsPage() {
 
       try {
         const data = await tryFetch(access);
-        setUser({
-          name: data.username,
-          tier: data.tier,
-          points: data.points,
-          expiring_points: data.expiring_points,
-          expiry_date: data.expiry_date,
-          tier_thresholds: data.tier_thresholds,
-          current_tier_threshold: data.current_tier_threshold,
-          next_tier: data.next_tier,
-          next_tier_threshold: data.next_tier_threshold,
-        });
+        setUser(buildUser(data));
         setVouchers(data.rewards || []);
       } catch (error) {
         console.warn("Access token might be expired, trying to refresh...");
@@ -73,17 +72,7 @@ export default function RewardsPage() {
           localStorage.setItem("access", access);
 
           const data = await tryFetch(access);
-          setUser({
-            name: data.username,
-            tier: data.tier,
-            points: data.points,
-            expiring_points: data.expiring_points,
-            expiry_date: data.expiry_date,
-            tier_thresholds: data.tier_thresholds,
-            current_tier_threshold: data.current_tier_threshold,
-            next_tier: data.next_tier,
-            next_tier_threshold: data.next_tier_threshold,
-          });
+          setUser(buildUser(data));
           setVouchers(data.rewards || []);
         } catch (refreshError) {
           console.error("Token refresh failed or second fetch failed:", refreshError);
@@ -137,10 +126,8 @@ export default function RewardsPage() {
   Platinum: '/voucher_images/platinum-big.png',
 };
 
-  // Calculate progress percentage for the progress bar
-  const progressPercent = nextThreshold
-    ? (user.points / nextThreshold) * 100
-    : 0;
+  // Calculate progress percentage for the progress bar (HARDCODED for demo)
+  const progressPercent = 67;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
@@ -174,7 +161,13 @@ export default function RewardsPage() {
                           Expiring: {user.expiring_points ?? '—'} points
                         </p>
                         <p className="text-md text-gray-500">
-                          By: {user.expiry_date ? new Date(user.expiry_date).toLocaleDateString() : '—'}
+                          By: {user.expiry_date ?
+                            new Date(user.expiry_date).toLocaleDateString('en-GB', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            })
+                            : '—'}
                         </p>
                   </div>
                   {/* Tier Badge above progress bar, to the right of points */}
@@ -187,16 +180,16 @@ export default function RewardsPage() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between mb-2 mt-2">
-                <span className="text-md">
-                  Points Required to Maintain Tier: {currentThreshold ?? '—'}
-                </span>
-                <span className="text-md">
-                  {nextThreshold !== null
-                    ? `Points Required for ${nextTier} Tier: ${nextThreshold - user.points}`
-                    : (sortedTiers.length > 0 && sortedTiers[sortedTiers.length - 1] === user.tier)
-                      ? <>You are at the highest tier! <span role="img" aria-label="celebrate">🎉</span></>
-                      : "Tier information is currently unavailable."}
-                </span>
+                  <span className="text-md">
+                    {`You need at least ${currentThreshold ?? '—'} points by ${user.expiry_date ? new Date(user.expiry_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'} to keep your ${user.tier} tier.`}
+                  </span>
+                  <span className="text-md">
+                    {nextThreshold !== null
+                      ? `Points Required for ${nextTier} Tier: ${nextThreshold - user.points}`
+                      : (sortedTiers.length > 0 && sortedTiers[sortedTiers.length - 1] === user.tier)
+                        ? <>You are at the highest tier! <span role="img" aria-label="celebrate">🎉</span></>
+                        : "Tier information is currently unavailable."}
+                  </span>
                 </div>
                 <Progress value={progressPercent} className="h-4" />
               </div>
